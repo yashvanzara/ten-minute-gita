@@ -86,7 +86,7 @@ function parseMarkdownFile(filePath, snippetId) {
     }
 
     if (line.trim() === '---') continue;
-    if (line.includes('Based on the teachings of Swami Chinmayananda')) continue;
+    if (line.includes('Inspired by the teachings of Swami Chinmayananda')) continue;
 
     if (currentSection) {
       sectionContent.push(line);

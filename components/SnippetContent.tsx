@@ -470,7 +470,7 @@ export function SnippetContent({ snippet, isContentLocked = false, isPreviewLimi
 
           {/* Attribution */}
           <Text style={[styles.attribution, { color: colors.textSecondary }]}>
-            Based on the teachings of Swami Chinmayananda
+            Inspired by the teachings of Swami Chinmayananda
           </Text>
         </>
       ) : null}
