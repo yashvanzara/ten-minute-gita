@@ -1,12 +1,17 @@
-import React from 'react';
-import { ScrollView, StyleSheet, View, Text } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { ScrollView, StyleSheet, View, Text, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 import { TodayCard } from '@/components/TodayCard';
 import { StreakIndicator } from '@/components/StreakIndicator';
 import { ReflectionTeaser } from '@/components/ReflectionTeaser';
+import { LanguageToggle } from '@/components/LanguageToggle';
+import { WelcomeBanner } from '@/components/WelcomeBanner';
+import { NotificationPrompt } from '@/components/NotificationPrompt';
 import { useApp } from '@/contexts/AppContext';
 import { useSnippets } from '@/hooks/useSnippets';
 import { useStreak } from '@/hooks/useStreak';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useFirstTimeUser } from '@/contexts/FTUEContext';
 import Colors from '@/constants/Colors';
 import { useAppColorScheme } from '@/hooks/useAppColorScheme';
 
@@ -14,47 +19,92 @@ export default function HomeScreen() {
   const colorScheme = useAppColorScheme();
   const colors = Colors[colorScheme];
   const router = useRouter();
+  const { t, fadeAnim } = useLanguage();
   const { state } = useApp();
   const { getSnippet, getNextSnippet } = useSnippets();
   const { readToday } = useStreak();
+  const {
+    hasSeenWelcome,
+    hasCompletedFirstReading,
+    hasSetupNotifications,
+    loaded: ftueLoaded,
+    dismissWelcome,
+    markNotificationsHandled,
+  } = useFirstTimeUser();
+
+  // Tooltip state - show after welcome is dismissed, auto-hide after 3s
+  const [showTooltip, setShowTooltip] = useState(false);
+  const tooltipAnim = useRef(new Animated.Value(0)).current;
+
+  const handleDismissWelcome = () => {
+    dismissWelcome();
+    // Show tooltip only if user hasn't completed any readings yet
+    if (completedSnippets.length === 0) {
+      setTimeout(() => {
+        setShowTooltip(true);
+        Animated.timing(tooltipAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+        // Auto-dismiss after 3 seconds
+        setTimeout(() => {
+          Animated.timing(tooltipAnim, {
+            toValue: 0,
+            duration: 250,
+            useNativeDriver: true,
+          }).start(() => setShowTooltip(false));
+        }, 3000);
+      }, 300);
+    }
+  };
+
+  const dismissTooltip = () => {
+    Animated.timing(tooltipAnim, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => setShowTooltip(false));
+  };
+
+  const getGreeting = (): string => {
+    const hour = new Date().getHours();
+    if (hour < 12) return t('home.goodMorning');
+    if (hour < 17) return t('home.goodAfternoon');
+    return t('home.goodEvening');
+  };
 
   const currentSnippetId = state.progress.currentSnippet;
-
   const completedSnippets = state.progress.completedSnippets;
 
   const handleStartStreak = () => {
-    // Navigate directly to today's reading
+    dismissTooltip();
     router.push(`/reading/${currentSnippetId}`);
   };
 
-  // Get the last completed snippet ID
   const lastCompletedId = completedSnippets.length > 0
     ? Math.max(...completedSnippets)
     : 0;
 
-  // When completed today: show last completed for review, current as "tomorrow"
-  // When not completed: show current snippet to read
   const lastCompletedSnippet = getSnippet(lastCompletedId);
   const currentSnippet = getSnippet(currentSnippetId);
 
-  // For the TodayCard:
-  // - If readToday: snippet = lastCompleted (for review), nextSnippet = current (tomorrow's)
-  // - If not readToday: snippet = current (today's), nextSnippet = next one
   const displaySnippet = readToday ? lastCompletedSnippet : currentSnippet;
   const upNextSnippet = readToday ? currentSnippet : getNextSnippet(currentSnippetId);
 
   if (state.isLoading || !displaySnippet) {
     return (
       <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
-        <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Loading...</Text>
+        <Text style={[styles.loadingText, { color: colors.textSecondary }]}>{t('common.loading')}</Text>
       </View>
     );
   }
 
-  // Journey text logic
   const journeyText = readToday
-    ? `Day ${lastCompletedId} complete ✓`
-    : `Day ${currentSnippetId} of your journey`;
+    ? t('home.dayComplete', { day: lastCompletedId })
+    : t('home.dayOfJourney', { day: currentSnippetId });
+
+  const showWelcome = ftueLoaded && !hasSeenWelcome;
 
   return (
     <ScrollView
@@ -62,43 +112,76 @@ export default function HomeScreen() {
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
-      {/* Greeting + Journey Progress */}
-      <View style={styles.greeting}>
-        <Text style={[styles.greetingText, { color: colors.text }]}>
-          {getGreeting()}
-        </Text>
-        <Text style={[
-          styles.journeyText,
-          { color: readToday ? colors.accent : colors.textSecondary }
-        ]}>
-          {journeyText}
-        </Text>
-      </View>
+      <Animated.View style={{ opacity: fadeAnim }}>
+        {/* Welcome Banner - first time only (floating modal) */}
+        <WelcomeBanner visible={showWelcome} onDismiss={handleDismissWelcome} />
 
-      {/* Today's Content Preview - MAIN FOCUS */}
-      <TodayCard
-        snippet={displaySnippet}
-        isCompleted={readToday}
-        nextSnippet={upNextSnippet}
-      />
+        {/* Greeting + Journey Progress */}
+        <View style={[styles.greeting, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }]}>
+          <View>
+            <Text style={[styles.greetingText, { color: colors.text }]}>
+              {getGreeting()}
+            </Text>
+            <Text style={[
+              styles.journeyText,
+              { color: readToday ? colors.accent : colors.textSecondary }
+            ]}>
+              {journeyText}
+            </Text>
+          </View>
+          {/* Hide language toggle when welcome banner is showing (it has its own) */}
+          {!showWelcome && <LanguageToggle />}
+        </View>
 
-      {/* Streak Indicator - Compact */}
-      <StreakIndicator onStartStreak={handleStartStreak} />
+        {/* Today's Content Preview - MAIN FOCUS */}
+        <View>
+          <TodayCard
+            snippet={displaySnippet}
+            isCompleted={readToday}
+            nextSnippet={upNextSnippet}
+          />
+          {/* Tooltip hint - points to the reading button */}
+          {showTooltip && (
+            <Animated.View
+              style={[
+                styles.tooltip,
+                {
+                  backgroundColor: colors.accent,
+                  opacity: tooltipAnim,
+                  transform: [{
+                    translateY: tooltipAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [8, 0],
+                    }),
+                  }],
+                },
+              ]}
+            >
+              <Text style={styles.tooltipText}>
+                {t('ftue.tapToStart')}
+              </Text>
+              <View style={[styles.tooltipArrow, { borderBottomColor: colors.accent }]} />
+            </Animated.View>
+          )}
+        </View>
 
-      {/* Today's Reflection Teaser */}
-      <ReflectionTeaser
-        reflection={displaySnippet.reflection}
-        isCompleted={readToday}
+        {/* Streak Indicator - Compact */}
+        <StreakIndicator onStartStreak={handleStartStreak} />
+
+        {/* Today's Reflection Teaser */}
+        <ReflectionTeaser
+          reflection={displaySnippet.shortReflection || displaySnippet.reflection}
+          isCompleted={readToday}
+        />
+      </Animated.View>
+
+      {/* Notification prompt - shown on home screen after first reading completion */}
+      <NotificationPrompt
+        visible={hasCompletedFirstReading && !hasSetupNotifications}
+        onDismiss={() => markNotificationsHandled()}
       />
     </ScrollView>
   );
-}
-
-function getGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
-  return 'Good evening';
 }
 
 const styles = StyleSheet.create({
@@ -129,5 +212,30 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginTop: 4,
     fontWeight: '500',
+  },
+  tooltip: {
+    marginHorizontal: 20,
+    marginTop: -4,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    position: 'relative',
+  },
+  tooltipText: {
+    color: '#FFF',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  tooltipArrow: {
+    position: 'absolute',
+    top: -6,
+    width: 0,
+    height: 0,
+    borderLeftWidth: 6,
+    borderRightWidth: 6,
+    borderBottomWidth: 6,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
   },
 });

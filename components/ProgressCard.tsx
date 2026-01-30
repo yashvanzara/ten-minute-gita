@@ -5,11 +5,13 @@ import { useProgress } from '@/hooks/useProgress';
 import { useApp } from '@/contexts/AppContext';
 import Colors from '@/constants/Colors';
 import { useAppColorScheme } from '@/hooks/useAppColorScheme';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export function ProgressCard() {
   const router = useRouter();
   const colorScheme = useAppColorScheme();
   const colors = Colors[colorScheme];
+  const { t } = useLanguage();
   const { state } = useApp();
   const { currentSnippet, completedCount, totalSnippets, percentage, daysRemaining, isComplete } = useProgress();
 
@@ -20,7 +22,7 @@ export function ProgressCard() {
   return (
     <View style={[styles.card, { backgroundColor: colors.card }]}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.text }]}>Your Progress</Text>
+        <Text style={[styles.title, { color: colors.text }]}>{t('progressCard.yourProgress')}</Text>
         <Text style={[styles.percentage, { color: colors.accent }]}>{percentage}%</Text>
       </View>
 
@@ -36,17 +38,17 @@ export function ProgressCard() {
       <View style={styles.statsRow}>
         <View style={styles.stat}>
           <Text style={[styles.statNumber, { color: colors.text }]}>{completedCount}</Text>
-          <Text style={[styles.statLabel, { color: colors.textSecondary }]}>completed</Text>
+          <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t('progressCard.completed')}</Text>
         </View>
         <View style={styles.statDivider} />
         <View style={styles.stat}>
           <Text style={[styles.statNumber, { color: colors.text }]}>{totalSnippets}</Text>
-          <Text style={[styles.statLabel, { color: colors.textSecondary }]}>total</Text>
+          <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t('progressCard.total')}</Text>
         </View>
         <View style={styles.statDivider} />
         <View style={styles.stat}>
           <Text style={[styles.statNumber, { color: colors.text }]}>{daysRemaining}</Text>
-          <Text style={[styles.statLabel, { color: colors.textSecondary }]}>remaining</Text>
+          <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t('progressCard.remaining')}</Text>
         </View>
       </View>
 
@@ -58,10 +60,10 @@ export function ProgressCard() {
         onPress={handleContinue}
       >
         <Text style={styles.continueButtonText}>
-          {isComplete ? 'Read Again' : completedCount === 0 ? 'Start Reading' : 'Continue Reading'}
+          {isComplete ? t('progressCard.readAgain') : completedCount === 0 ? t('progressCard.startReading') : t('progressCard.continueReading')}
         </Text>
         <Text style={styles.continueButtonSubtext}>
-          {isComplete ? 'Day 1' : `Day ${currentSnippet}`}
+          {isComplete ? t('common.dayNum', { day: 1 }) : t('common.dayNum', { day: currentSnippet })}
         </Text>
       </Pressable>
     </View>

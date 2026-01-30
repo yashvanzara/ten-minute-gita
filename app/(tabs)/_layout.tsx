@@ -4,6 +4,7 @@ import { Tabs } from 'expo-router';
 
 import Colors from '@/constants/Colors';
 import { useAppColorScheme } from '@/hooks/useAppColorScheme';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
@@ -15,6 +16,7 @@ function TabBarIcon(props: {
 export default function TabLayout() {
   const colorScheme = useAppColorScheme();
   const colors = Colors[colorScheme];
+  const { t } = useLanguage();
 
   return (
     <Tabs
@@ -34,7 +36,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: t('tabs.home'),
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerTitle: '10 Minute Gita',
           headerTitleStyle: {
@@ -46,17 +48,17 @@ export default function TabLayout() {
       <Tabs.Screen
         name="progress"
         options={{
-          title: 'Progress',
+          title: t('tabs.progress'),
           tabBarIcon: ({ color }) => <TabBarIcon name="bar-chart" color={color} />,
-          headerTitle: 'Your Progress',
+          headerTitle: t('progressCard.yourProgress'),
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Settings',
+          title: t('tabs.settings'),
           tabBarIcon: ({ color }) => <TabBarIcon name="cog" color={color} />,
-          headerTitle: 'Settings',
+          headerTitle: t('tabs.settings'),
         }}
       />
     </Tabs>

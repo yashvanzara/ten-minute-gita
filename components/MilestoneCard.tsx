@@ -3,42 +3,44 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useProgress } from '@/hooks/useProgress';
 import Colors from '@/constants/Colors';
 import { useAppColorScheme } from '@/hooks/useAppColorScheme';
+import { MILESTONES } from '@/types';
+import { useLanguage, hiFontSize } from '@/contexts/LanguageContext';
 
 const MILESTONE_EMOJIS: { [key: number]: string } = {
   1: '🌱',
   3: '🌿',
   7: '🌴',
-  10: '🌳',
   30: '⭐',
-  60: '🌟',
-  120: '💫',
+  100: '💯',
   239: '🏆',
-};
-
-const MILESTONE_LABELS: { [key: number]: string } = {
-  1: 'First Day',
-  3: '3 Days',
-  7: 'One Week',
-  10: '10 Days',
-  30: 'One Month',
-  60: '60 Days',
-  120: '120 Days',
-  239: 'Complete Journey',
 };
 
 export function MilestoneCard() {
   const colorScheme = useAppColorScheme();
   const colors = Colors[colorScheme];
+  const { t, language } = useLanguage();
   const { milestones, completedCount } = useProgress();
   const [isExpanded, setIsExpanded] = useState(false);
 
+  const getMilestoneLabel = (days: number): string => {
+    const labelMap: { [key: number]: string } = {
+      1: t('milestoneCard.firstDay'),
+      3: t('milestoneCard.threeDays'),
+      7: t('milestoneCard.oneWeek'),
+      30: t('milestoneCard.oneMonth'),
+      100: t('milestoneCard.hundredDays'),
+      239: t('milestoneCard.completeJourney'),
+    };
+    return labelMap[days] || `${days}`;
+  };
+
   // Filter milestones based on progress:
-  // - Always show: 1, 3, 7, 10
-  // - Show 30 after reaching 10 days
-  // - Show 60, 120, 239 after reaching 30 days
+  // - Always show: 1, 3, 7
+  // - Show 30 after reaching 7 days
+  // - Show 100, 239 after reaching 30 days
   const filteredMilestones = milestones.filter(m => {
-    if (m.days <= 10) return true;
-    if (m.days === 30) return completedCount >= 10;
+    if (m.days <= 7) return true;
+    if (m.days === 30) return completedCount >= 7;
     return completedCount >= 30;
   });
 
@@ -51,19 +53,19 @@ export function MilestoneCard() {
 
   // Calculate "to go" for each milestone (all based on total completed days)
   const getToGoText = (days: number, achieved: boolean): string => {
-    if (achieved) return 'Achieved!';
+    if (achieved) return t('milestoneCard.achieved');
     const remaining = days - completedCount;
-    return remaining === 1 ? '1 day to go' : `${remaining} days to go`;
+    return remaining === 1 ? t('milestoneCard.oneDayToGo') : t('milestoneCard.daysToGo', { count: remaining });
   };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.card }]}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.text }]}>Milestones</Text>
+        <Text style={[styles.title, { color: colors.text }]}>{t('milestoneCard.milestones')}</Text>
         {hasHiddenMilestones && (
           <Pressable onPress={() => setIsExpanded(!isExpanded)} hitSlop={8}>
             <Text style={[styles.expandButton, { color: colors.accent }]}>
-              {isExpanded ? 'Show less' : 'See all'}
+              {isExpanded ? t('milestoneCard.showLess') : t('milestoneCard.seeAll')}
             </Text>
           </Pressable>
         )}
@@ -97,10 +99,10 @@ export function MilestoneCard() {
               <Text
                 style={[
                   styles.milestoneLabel,
-                  { color: achieved ? '#4CAF50' : colors.text },
+                  { color: achieved ? '#4CAF50' : colors.text, fontSize: hiFontSize(14, language) },
                 ]}
               >
-                {MILESTONE_LABELS[days]}
+                {getMilestoneLabel(days)}
               </Text>
               <Text
                 style={[

@@ -31,9 +31,24 @@ export interface NotificationContent {
 export const generateNotificationContent = (
   currentSnippet: number,
   snippetTitle: string,
-  streak: number
+  streak: number,
+  t?: (key: string, params?: Record<string, string | number>) => string
 ): NotificationContent => {
   // Positive, inviting messages - never use negative language
+  if (t) {
+    if (streak === 0) {
+      return {
+        title: t('notifications.beginJourney'),
+        body: t('notifications.dayIntro', { day: 1, title: snippetTitle }),
+      };
+    } else {
+      return {
+        title: t('notifications.dayReady', { day: currentSnippet }),
+        body: t('notifications.keepGoing', { title: snippetTitle, streak }),
+      };
+    }
+  }
+
   if (streak === 0) {
     return {
       title: 'Begin your journey today',
@@ -56,7 +71,8 @@ export const scheduleDailyReminder = async (
   time: string,
   currentSnippet: number,
   snippetTitle: string,
-  streak: number
+  streak: number,
+  t?: (key: string, params?: Record<string, string | number>) => string
 ): Promise<string | null> => {
   const hasPermission = await requestNotificationPermissions();
   if (!hasPermission) return null;
@@ -66,7 +82,7 @@ export const scheduleDailyReminder = async (
 
   const [hours, minutes] = time.split(':').map(Number);
 
-  const { title, body } = generateNotificationContent(currentSnippet, snippetTitle, streak);
+  const { title, body } = generateNotificationContent(currentSnippet, snippetTitle, streak, t);
 
   const trigger: Notifications.NotificationTriggerInput = {
     type: Notifications.SchedulableTriggerInputTypes.DAILY,

@@ -4,8 +4,7 @@ import { useRouter } from 'expo-router';
 import { useProgress } from '@/hooks/useProgress';
 import Colors from '@/constants/Colors';
 import { useAppColorScheme } from '@/hooks/useAppColorScheme';
-
-const DAYS_OF_WEEK = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface DayData {
   date: string;
@@ -18,6 +17,7 @@ interface DayData {
 export function CalendarHeatmap() {
   const colorScheme = useAppColorScheme();
   const colors = Colors[colorScheme];
+  const { t, tArray } = useLanguage();
   const router = useRouter();
   const { readingHistory } = useProgress();
 
@@ -85,15 +85,15 @@ export function CalendarHeatmap() {
   return (
     <View style={[styles.container, { backgroundColor: colors.card }]}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.text }]}>Reading History</Text>
+        <Text style={[styles.title, { color: colors.text }]}>{t('calendar.readingHistory')}</Text>
         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-          {readDaysCount} {readDaysCount === 1 ? 'day' : 'days'} total
+          {t('calendar.daysTotal', { count: readDaysCount })}
         </Text>
       </View>
 
       {/* Day labels row (S M T W T F S) */}
       <View style={styles.dayLabelsRow}>
-        {DAYS_OF_WEEK.map((day, index) => (
+        {tArray('calendar.dayLabels').map((day, index) => (
           <View key={index} style={styles.dayLabelCell}>
             <Text style={[styles.dayLabel, { color: colors.textSecondary }]}>
               {day}
@@ -148,15 +148,15 @@ export function CalendarHeatmap() {
               { backgroundColor: colorScheme === 'dark' ? '#404040' : '#E8E8E8' },
             ]}
           />
-          <Text style={[styles.legendText, { color: colors.textSecondary }]}>No reading</Text>
+          <Text style={[styles.legendText, { color: colors.textSecondary }]}>{t('calendar.noReading')}</Text>
         </View>
         <View style={styles.legendItem}>
           <View style={[styles.legendCell, { backgroundColor: colors.accent }]} />
-          <Text style={[styles.legendText, { color: colors.textSecondary }]}>Read</Text>
+          <Text style={[styles.legendText, { color: colors.textSecondary }]}>{t('calendar.read')}</Text>
         </View>
         <View style={styles.legendItem}>
           <View style={[styles.legendCell, styles.todayLegend, { borderColor: colors.accent }]} />
-          <Text style={[styles.legendText, { color: colors.textSecondary }]}>Today</Text>
+          <Text style={[styles.legendText, { color: colors.textSecondary }]}>{t('calendar.today')}</Text>
         </View>
       </View>
     </View>

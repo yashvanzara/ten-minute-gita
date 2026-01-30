@@ -31,13 +31,7 @@
   "submit": {
     "production": {
       "ios": {
-        "appleId": "",
-        "ascAppId": "",
-        "appleTeamId": ""
-      },
-      "android": {
-        "serviceAccountKeyPath": "",
-        "track": "production"
+        "appleTeamId": "73Y22X44QD"
       }
     }
   }

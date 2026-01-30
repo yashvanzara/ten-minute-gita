@@ -4,6 +4,7 @@ import { useStreak } from '@/hooks/useStreak';
 import { useApp } from '@/contexts/AppContext';
 import Colors from '@/constants/Colors';
 import { useAppColorScheme } from '@/hooks/useAppColorScheme';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface StreakIndicatorProps {
   onStartStreak?: () => void;
@@ -12,6 +13,7 @@ interface StreakIndicatorProps {
 export function StreakIndicator({ onStartStreak }: StreakIndicatorProps) {
   const colorScheme = useAppColorScheme();
   const colors = Colors[colorScheme];
+  const { t } = useLanguage();
   const { current, isAtRisk, canUseFreeze, useFreeze, freezesAvailable } = useStreak();
   const { state } = useApp();
   const { completedSnippets } = state.progress;
@@ -22,9 +24,9 @@ export function StreakIndicator({ onStartStreak }: StreakIndicatorProps) {
 
   const getStreakDisplay = () => {
     if (isZeroStreak) {
-      return hasEverCompleted ? 'Restart your streak today' : 'Start your streak today';
+      return hasEverCompleted ? t('streak.restartToday') : t('streak.startToday');
     }
-    return `${current} day streak`;
+    return t('streak.dayStreak', { count: current });
   };
 
   // Make tappable when zero streak to encourage starting
@@ -43,7 +45,7 @@ export function StreakIndicator({ onStartStreak }: StreakIndicatorProps) {
 
       {isAtRisk && !isZeroStreak && (
         <View style={[styles.riskBadge, { backgroundColor: colors.streak }]}>
-          <Text style={styles.riskText}>At Risk!</Text>
+          <Text style={styles.riskText}>{t('streak.atRisk')}</Text>
         </View>
       )}
     </>
@@ -58,6 +60,8 @@ export function StreakIndicator({ onStartStreak }: StreakIndicatorProps) {
             { backgroundColor: colors.card, opacity: pressed ? 0.8 : 1 }
           ]}
           onPress={handlePress}
+          accessibilityLabel={getStreakDisplay()}
+          accessibilityRole="button"
         >
           {content}
         </Pressable>
@@ -74,7 +78,7 @@ export function StreakIndicator({ onStartStreak }: StreakIndicatorProps) {
           onPress={useFreeze}
         >
           <Text style={[styles.freezeText, { color: colors.accent }]}>
-            ❄️ Use Freeze ({freezesAvailable})
+            {t('streak.useFreeze', { count: freezesAvailable })}
           </Text>
         </Pressable>
       )}

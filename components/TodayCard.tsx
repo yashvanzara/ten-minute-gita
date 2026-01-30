@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Snippet } from '@/types';
 import Colors from '@/constants/Colors';
 import { useAppColorScheme } from '@/hooks/useAppColorScheme';
+import { useLanguage, hiFontSize } from '@/contexts/LanguageContext';
 
 interface TodayCardProps {
   snippet: Snippet;
@@ -15,6 +16,7 @@ export function TodayCard({ snippet, isCompleted, nextSnippet }: TodayCardProps)
   const router = useRouter();
   const colorScheme = useAppColorScheme();
   const colors = Colors[colorScheme];
+  const { t, language } = useLanguage();
 
   const handleBeginReading = () => {
     router.push(`/reading/${snippet.id}`);
@@ -49,10 +51,10 @@ export function TodayCard({ snippet, isCompleted, nextSnippet }: TodayCardProps)
           <Text style={styles.celebrationEmoji}>✓</Text>
           <View style={styles.celebrationText}>
             <Text style={[styles.celebrationTitle, { color: colors.text }]}>
-              You've read today!
+              {t('todayCard.readToday')}
             </Text>
-            <Text style={[styles.celebrationSubtitle, { color: colors.textSecondary }]}>
-              Beautiful. Come back tomorrow.
+            <Text style={[styles.celebrationSubtitle, { color: colors.textSecondary, fontSize: hiFontSize(15, language) }]}>
+              {t('todayCard.comeBackTomorrow')}
             </Text>
           </View>
         </View>
@@ -61,10 +63,10 @@ export function TodayCard({ snippet, isCompleted, nextSnippet }: TodayCardProps)
         {nextSnippet && (
           <View style={[styles.upNextSection, { borderTopColor: colors.border }]}>
             <Text style={[styles.upNextLabel, { color: colors.accent }]}>
-              UP NEXT
+              {t('todayCard.upNext')}
             </Text>
             <Text style={[styles.upNextChapter, { color: colors.textSecondary }]}>
-              Chapter {nextSnippet.chapter} · Verses {nextSnippet.verses}
+              {t('todayCard.chapterVerses', { chapter: nextSnippet.chapter, verses: nextSnippet.verses })}
             </Text>
             <Text style={[styles.upNextTitle, { color: colors.text }]}>
               {nextDisplayTitle}
@@ -76,17 +78,19 @@ export function TodayCard({ snippet, isCompleted, nextSnippet }: TodayCardProps)
                 { backgroundColor: colors.accent, opacity: pressed ? 0.9 : 1 },
               ]}
               onPress={handlePreviewNext}
+              accessibilityLabel={t('todayCard.previewTomorrow')}
+              accessibilityRole="button"
             >
-              <Text style={styles.previewButtonText}>Preview Tomorrow</Text>
-              <Text style={styles.previewButtonSubtext}>~10 minutes</Text>
+              <Text style={styles.previewButtonText}>{t('todayCard.previewTomorrow')}</Text>
+              <Text style={styles.previewButtonSubtext}>{t('todayCard.tenMinutes')}</Text>
             </Pressable>
           </View>
         )}
 
         {/* Review Link */}
-        <Pressable style={styles.reviewLink} onPress={handleReview}>
+        <Pressable style={styles.reviewLink} onPress={handleReview} accessibilityLabel={t('todayCard.reviewDay', { day: snippet.id })} accessibilityRole="button">
           <Text style={[styles.reviewLinkText, { color: colors.textSecondary }]}>
-            Review Day {snippet.id} →
+            {t('todayCard.reviewDay', { day: snippet.id })}
           </Text>
         </Pressable>
       </View>
@@ -98,7 +102,7 @@ export function TodayCard({ snippet, isCompleted, nextSnippet }: TodayCardProps)
     <View style={[styles.card, { backgroundColor: colors.card }]}>
       {/* Chapter and verse info */}
       <Text style={[styles.chapterLabel, { color: colors.accent }]}>
-        CHAPTER {snippet.chapter} · Verses {snippet.verses}
+        {t('todayCard.chapterVerses', { chapter: snippet.chapter, verses: snippet.verses })}
       </Text>
 
       {/* Title */}
@@ -118,9 +122,11 @@ export function TodayCard({ snippet, isCompleted, nextSnippet }: TodayCardProps)
           { backgroundColor: colors.accent, opacity: pressed ? 0.9 : 1 },
         ]}
         onPress={handleBeginReading}
+        accessibilityLabel={t('todayCard.beginReading')}
+        accessibilityRole="button"
       >
-        <Text style={styles.ctaText}>Begin Today's Reading</Text>
-        <Text style={styles.ctaSubtext}>~10 minutes</Text>
+        <Text style={[styles.ctaText, { fontSize: hiFontSize(18, language) }]}>{t('todayCard.beginReading')}</Text>
+        <Text style={styles.ctaSubtext}>{t('todayCard.tenMinutes')}</Text>
       </Pressable>
     </View>
   );

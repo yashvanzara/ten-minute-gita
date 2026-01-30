@@ -1,0 +1,143 @@
+import React from 'react';
+import { View, Text, Pressable, Alert, Share, Linking, StyleSheet } from 'react-native';
+import Colors from '@/constants/Colors';
+import { logger } from '@/utils/logger';
+
+interface SupportSectionProps {
+  colors: (typeof Colors)['light'];
+  t: (key: string, params?: Record<string, string | number>) => string;
+  currentDay: number;
+  onResetProgress: () => void;
+}
+
+export function SupportSection({ colors, t, currentDay, onResetProgress }: SupportSectionProps) {
+  const handleRateApp = async () => {
+    try {
+      const StoreReview = await import('expo-store-review');
+      const isAvailable = await StoreReview.isAvailableAsync();
+      if (isAvailable) {
+        await StoreReview.requestReview();
+      } else {
+        Alert.alert(t('settings.comingSoon'), t('settings.appStoreRating'));
+      }
+    } catch {
+      Alert.alert(t('settings.comingSoon'), t('settings.appStoreRating'));
+    }
+  };
+
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        message: t('settings.shareMessage', { day: currentDay }),
+      });
+    } catch (error) {
+      logger.error('settings.share', error);
+    }
+  };
+
+  const handleSendFeedback = async () => {
+    const email = 'tenminutegita@gmail.com';
+    const subject = encodeURIComponent('10 Minute Gita Feedback');
+    const mailtoUrl = `mailto:${email}?subject=${subject}`;
+
+    try {
+      const canOpen = await Linking.canOpenURL(mailtoUrl);
+      if (canOpen) {
+        await Linking.openURL(mailtoUrl);
+      } else {
+        Alert.alert(
+          t('settings.sendFeedback'),
+          t('settings.emailUs', { email }),
+          [
+            { text: t('settings.copyEmail'), onPress: () => Alert.alert('Email', email) },
+            { text: t('common.ok') },
+          ]
+        );
+      }
+    } catch {
+      Alert.alert(t('settings.sendFeedback'), `Email us at: ${email}`);
+    }
+  };
+
+  return (
+    <>
+      <Text style={[styles.sectionHeader, { color: colors.textSecondary }]}>
+        {t('settings.spreadWisdom')}
+      </Text>
+      <View style={[styles.card, { backgroundColor: colors.card }]}>
+        <Pressable
+          style={({ pressed }) => [styles.actionRow, { opacity: pressed ? 0.7 : 1 }]}
+          onPress={handleRateApp}
+        >
+          <Text style={styles.actionIcon}>⭐</Text>
+          <Text style={[styles.actionLabel, { color: colors.text }]}>{t('settings.rateApp')}</Text>
+          <Text style={[styles.chevron, { color: colors.textSecondary }]}>›</Text>
+        </Pressable>
+
+        <View style={[styles.rowDivider, { backgroundColor: colors.border }]} />
+
+        <Pressable
+          style={({ pressed }) => [styles.actionRow, { opacity: pressed ? 0.7 : 1 }]}
+          onPress={handleShare}
+        >
+          <Text style={styles.actionIcon}>📤</Text>
+          <Text style={[styles.actionLabel, { color: colors.text }]}>{t('settings.shareWithFriends')}</Text>
+          <Text style={[styles.chevron, { color: colors.textSecondary }]}>›</Text>
+        </Pressable>
+
+        <View style={[styles.rowDivider, { backgroundColor: colors.border }]} />
+
+        <Pressable
+          style={({ pressed }) => [styles.actionRow, { opacity: pressed ? 0.7 : 1 }]}
+          onPress={handleSendFeedback}
+        >
+          <Text style={styles.actionIcon}>💬</Text>
+          <Text style={[styles.actionLabel, { color: colors.text }]}>{t('settings.sendFeedback')}</Text>
+          <Text style={[styles.chevron, { color: colors.textSecondary }]}>›</Text>
+        </Pressable>
+      </View>
+
+      <Text style={[styles.sectionHeader, { color: colors.textSecondary }]}>
+        {t('settings.yourData')}
+      </Text>
+      <View style={[styles.card, { backgroundColor: colors.card }]}>
+        <Pressable
+          style={({ pressed }) => [styles.actionRow, { opacity: pressed ? 0.7 : 1 }]}
+          onPress={onResetProgress}
+        >
+          <Text style={styles.actionIcon}>🗑️</Text>
+          <Text style={[styles.actionLabel, { color: '#DC3545' }]}>{t('settings.resetAllProgress')}</Text>
+          <Text style={[styles.chevron, { color: colors.textSecondary }]}>›</Text>
+        </Pressable>
+      </View>
+    </>
+  );
+}
+
+const styles = StyleSheet.create({
+  sectionHeader: {
+    fontSize: 12,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginBottom: 8,
+    marginLeft: 20,
+    marginTop: 8,
+  },
+  card: {
+    borderRadius: 16,
+    padding: 16,
+    marginHorizontal: 16,
+    marginBottom: 16,
+  },
+  actionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    minHeight: 52,
+    paddingVertical: 8,
+  },
+  actionIcon: { fontSize: 20, width: 32 },
+  actionLabel: { flex: 1, fontSize: 16 },
+  chevron: { fontSize: 22, fontWeight: '300' },
+  rowDivider: { height: 1, marginLeft: 32 },
+});

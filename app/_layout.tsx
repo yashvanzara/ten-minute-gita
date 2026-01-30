@@ -8,6 +8,8 @@ import 'react-native-reanimated';
 
 import { useAppColorScheme } from '@/hooks/useAppColorScheme';
 import { AppProvider } from '@/contexts/AppContext';
+import { LanguageProvider } from '@/contexts/LanguageContext';
+import { FTUEProvider } from '@/contexts/FTUEContext';
 import Colors from '@/constants/Colors';
 
 export {
@@ -41,9 +43,13 @@ export default function RootLayout() {
   }
 
   return (
-    <AppProvider>
-      <RootLayoutNav />
-    </AppProvider>
+    <LanguageProvider>
+      <FTUEProvider>
+        <AppProvider>
+          <RootLayoutNav />
+        </AppProvider>
+      </FTUEProvider>
+    </LanguageProvider>
   );
 }
 

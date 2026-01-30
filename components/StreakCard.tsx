@@ -3,19 +3,21 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useStreak } from '@/hooks/useStreak';
 import Colors from '@/constants/Colors';
 import { useAppColorScheme } from '@/hooks/useAppColorScheme';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export function StreakCard() {
   const colorScheme = useAppColorScheme();
   const colors = Colors[colorScheme];
+  const { t } = useLanguage();
   const { current, longest, isAtRisk, readToday, canUseFreeze, useFreeze, motivationalMessage, freezesAvailable } = useStreak();
 
   return (
     <View style={[styles.card, { backgroundColor: colors.card }]}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.text }]}>Daily Streak</Text>
+        <Text style={[styles.title, { color: colors.text }]}>{t('streakCard.dailyStreak')}</Text>
         {isAtRisk && !readToday && (
           <View style={[styles.badge, { backgroundColor: colors.streak }]}>
-            <Text style={styles.badgeText}>At Risk!</Text>
+            <Text style={styles.badgeText}>{t('streak.atRisk')}</Text>
           </View>
         )}
       </View>
@@ -24,7 +26,7 @@ export function StreakCard() {
         <Text style={[styles.fireEmoji]}>🔥</Text>
         <Text style={[styles.streakNumber, { color: colors.streak }]}>{current}</Text>
         <Text style={[styles.streakLabel, { color: colors.textSecondary }]}>
-          {current === 1 ? 'day' : 'days'}
+          {t('streak.dayStreak', { count: current })}
         </Text>
       </View>
 
@@ -34,14 +36,14 @@ export function StreakCard() {
 
       {longest > current && (
         <Text style={[styles.longestStreak, { color: colors.textSecondary }]}>
-          Longest streak: {longest} days
+          {t('streakCard.longestStreak', { count: longest })}
         </Text>
       )}
 
       {/* Show freezes available if user has any */}
       {freezesAvailable > 0 && !canUseFreeze && (
         <Text style={[styles.freezeInfo, { color: colors.textSecondary }]}>
-          ❄️ {freezesAvailable} streak {freezesAvailable === 1 ? 'freeze' : 'freezes'} available
+          {t('streakCard.freezesAvailable', { count: freezesAvailable })}
         </Text>
       )}
 
@@ -50,13 +52,13 @@ export function StreakCard() {
           style={[styles.freezeButton, { backgroundColor: colors.accent }]}
           onPress={useFreeze}
         >
-          <Text style={styles.freezeButtonText}>❄️ Use Streak Freeze ({freezesAvailable} left)</Text>
+          <Text style={styles.freezeButtonText}>{t('streakCard.useStreakFreeze', { count: freezesAvailable })}</Text>
         </Pressable>
       )}
 
       {readToday && (
         <View style={styles.checkmark}>
-          <Text style={styles.checkmarkText}>✓ Read today</Text>
+          <Text style={styles.checkmarkText}>{t('streakCard.readToday')}</Text>
         </View>
       )}
     </View>

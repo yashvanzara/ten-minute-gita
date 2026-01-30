@@ -4,6 +4,7 @@ import { Snippet } from '@/types';
 import Colors from '@/constants/Colors';
 import { useAppColorScheme } from '@/hooks/useAppColorScheme';
 import { useApp } from '@/contexts/AppContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SnippetContentProps {
   snippet: Snippet;
@@ -183,7 +184,7 @@ function LockedContent({
   colorScheme,
   message,
   unlockTime,
-  isCompact = false
+  isCompact = false,
 }: {
   colors: any;
   colorScheme: 'light' | 'dark';
@@ -191,6 +192,8 @@ function LockedContent({
   unlockTime?: string;
   isCompact?: boolean;
 }) {
+  const { t } = useLanguage();
+
   if (isCompact) {
     return (
       <View style={[styles.lockedCompact, { backgroundColor: colorScheme === 'dark' ? '#2D2D2D' : '#F5F5F5' }]}>
@@ -207,7 +210,7 @@ function LockedContent({
       <View style={[styles.lockedCard, { backgroundColor: colors.card }]}>
         <Text style={styles.lockedEmoji}>🔒</Text>
         <Text style={[styles.lockedTitle, { color: colors.text }]}>
-          Content Locked
+          {t('snippet.contentLocked')}
         </Text>
         {message && (
           <Text style={[styles.lockedText, { color: colors.textSecondary }]}>
@@ -216,7 +219,7 @@ function LockedContent({
         )}
         {unlockTime && (
           <Text style={[styles.lockedTimer, { color: colors.accent }]}>
-            Unlocks in {unlockTime}
+            {t('snippet.unlocksIn', { time: unlockTime })}
           </Text>
         )}
       </View>
@@ -229,6 +232,7 @@ const WORDS_PER_MINUTE = 220;
 export function SnippetContent({ snippet, isContentLocked = false, isPreviewLimited = false, unlockTime, lockMessage, onScrollProgress }: SnippetContentProps) {
   const colorScheme = useAppColorScheme();
   const colors = Colors[colorScheme];
+  const { t, language } = useLanguage();
   const { state } = useApp();
   const { fontSize, showSanskrit, showTransliteration, showTranslation } = state.progress.settings;
 
@@ -304,10 +308,10 @@ export function SnippetContent({ snippet, isContentLocked = false, isPreviewLimi
       {/* Header */}
       <View style={styles.header}>
         <Text style={[styles.chapterLabel, { color: colors.accent }]}>
-          Chapter {snippet.chapter}
+          {t('common.chapter')} {snippet.chapter}
         </Text>
         <Text style={[styles.versesLabel, { color: colors.textSecondary }]}>
-          Verses {snippet.verses}
+          {t('common.verses')} {snippet.verses}
         </Text>
         <Text style={[
           styles.title,
@@ -343,7 +347,7 @@ export function SnippetContent({ snippet, isContentLocked = false, isPreviewLimi
             </View>
           </View>
           <Divider color={colors.border} />
-          <LockedContent colors={colors} colorScheme={colorScheme} message={lockMessage || "Complete earlier days to unlock."} />
+          <LockedContent colors={colors} colorScheme={colorScheme} message={lockMessage || t('snippet.completeEarlier')} />
         </>
       ) : (
         <>
@@ -383,10 +387,10 @@ export function SnippetContent({ snippet, isContentLocked = false, isPreviewLimi
                 <View style={styles.sectionHeader}>
                   <Text style={styles.sectionEmoji}>📖</Text>
                   <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                    Commentary
+                    {t('snippet.commentary')}
                   </Text>
                   <View style={styles.previewBadge}>
-                    <Text style={styles.previewBadgeText}>Preview</Text>
+                    <Text style={styles.previewBadgeText}>{t('snippet.preview')}</Text>
                   </View>
                 </View>
 
@@ -419,7 +423,7 @@ export function SnippetContent({ snippet, isContentLocked = false, isPreviewLimi
                 <View style={styles.sectionHeader}>
                   <Text style={styles.sectionEmoji}>📖</Text>
                   <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                    Commentary
+                    {t('snippet.commentary')}
                   </Text>
                 </View>
 
@@ -446,7 +450,7 @@ export function SnippetContent({ snippet, isContentLocked = false, isPreviewLimi
             <View style={styles.reflectionHeader}>
               <Text style={styles.reflectionEmoji}>🪷</Text>
               <Text style={[styles.reflectionTitle, { color: colors.accent }]}>
-                Reflection
+                {t('snippet.reflection')}
               </Text>
             </View>
 
@@ -458,7 +462,7 @@ export function SnippetContent({ snippet, isContentLocked = false, isPreviewLimi
                   {
                     color: colors.text,
                     fontSize: fontSize,
-                    lineHeight: fontSize * 1.7,
+                    lineHeight: fontSize * 1.7 * (language === 'hi' ? 1.1 : 1),
                     marginBottom: index < reflectionParagraphs.length - 1 ? fontSize : 0,
                   }
                 ]}
@@ -470,7 +474,7 @@ export function SnippetContent({ snippet, isContentLocked = false, isPreviewLimi
 
           {/* Attribution */}
           <Text style={[styles.attribution, { color: colors.textSecondary }]}>
-            Inspired by the teachings of Swami Chinmayananda
+            {t('snippet.inspiredBy')}
           </Text>
         </>
       ) : null}

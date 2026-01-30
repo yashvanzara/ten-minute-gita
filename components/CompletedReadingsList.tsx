@@ -5,12 +5,14 @@ import { useApp } from '@/contexts/AppContext';
 import { useSnippets } from '@/hooks/useSnippets';
 import Colors from '@/constants/Colors';
 import { useAppColorScheme } from '@/hooks/useAppColorScheme';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const MAX_DISPLAY = 7;
 
 export function CompletedReadingsList() {
   const colorScheme = useAppColorScheme();
   const colors = Colors[colorScheme];
+  const { t } = useLanguage();
   const router = useRouter();
   const { state } = useApp();
   const { getSnippet } = useSnippets();
@@ -44,11 +46,11 @@ export function CompletedReadingsList() {
   return (
     <View style={[styles.container, { backgroundColor: colors.card }]}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.text }]}>Completed Readings</Text>
+        <Text style={[styles.title, { color: colors.text }]}>{t('completedList.completedReadings')}</Text>
         {hasMore && (
           <Pressable onPress={() => {/* TODO: Open full list modal */}}>
             <Text style={[styles.viewAll, { color: colors.accent }]}>
-              View All ({completedSnippets.length})
+              {t('completedList.viewAll', { count: completedSnippets.length })}
             </Text>
           </Pressable>
         )}
@@ -70,7 +72,7 @@ export function CompletedReadingsList() {
           >
             <View style={styles.listItemContent}>
               <Text style={[styles.dayLabel, { color: colors.accent }]}>
-                Day {reading.id}
+                {t('common.dayNum', { day: reading.id })}
               </Text>
               <Text
                 style={[styles.titleText, { color: colors.text }]}

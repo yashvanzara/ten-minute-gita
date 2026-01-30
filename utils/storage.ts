@@ -1,7 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserProgress, Settings, TOTAL_SNIPPETS } from '@/types';
+import { CONFIG } from '@/constants/config';
+import { logger } from './logger';
 
-const STORAGE_KEY = '@gita_app_progress';
+const STORAGE_KEY = CONFIG.STORAGE_KEY;
 
 export const defaultSettings: Settings = {
   fontSize: 18,
@@ -31,7 +33,7 @@ export const saveProgress = async (progress: UserProgress): Promise<void> => {
   try {
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
   } catch (error) {
-    console.error('Error saving progress:', error);
+    logger.error('storage.saveProgress', error);
   }
 };
 
@@ -40,6 +42,17 @@ export const loadProgress = async (): Promise<UserProgress> => {
     const data = await AsyncStorage.getItem(STORAGE_KEY);
     if (data) {
       const parsed = JSON.parse(data);
+
+      // Validate critical fields
+      if (
+        typeof parsed.currentSnippet !== 'number' ||
+        parsed.currentSnippet < 1 ||
+        parsed.currentSnippet > TOTAL_SNIPPETS ||
+        !Array.isArray(parsed.completedSnippets) ||
+        (parsed.streak && typeof parsed.streak.current === 'number' && parsed.streak.current < 0)
+      ) {
+        return defaultProgress;
+      }
 
       // Migrate old boolean darkMode to new string type
       let migratedSettings = { ...parsed.settings };
@@ -57,7 +70,7 @@ export const loadProgress = async (): Promise<UserProgress> => {
     }
     return defaultProgress;
   } catch (error) {
-    console.error('Error loading progress:', error);
+    logger.error('storage.loadProgress', error);
     return defaultProgress;
   }
 };
@@ -66,7 +79,7 @@ export const resetProgress = async (): Promise<void> => {
   try {
     await AsyncStorage.removeItem(STORAGE_KEY);
   } catch (error) {
-    console.error('Error resetting progress:', error);
+    logger.error('storage.resetProgress', error);
   }
 };
 
@@ -83,9 +96,14 @@ export const isToday = (dateString: string): boolean => {
 };
 
 export const isYesterday = (dateString: string): boolean => {
-  const yesterday = new Date();
+  const now = new Date();
+  const yesterday = new Date(now);
   yesterday.setDate(yesterday.getDate() - 1);
-  return dateString === getDateString(yesterday);
+  if (dateString === getDateString(yesterday)) return true;
+  // Grace period: between midnight and 4 AM, treat today's date as "yesterday"
+  // so a streak isn't broken when reading at 11:59 PM and opening at 12:01 AM
+  if (now.getHours() < CONFIG.GRACE_PERIOD_HOURS && dateString === getDateString(now)) return true;
+  return false;
 };
 
 export const getWeekStart = (date: Date = new Date()): string => {

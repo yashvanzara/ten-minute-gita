@@ -87,6 +87,8 @@ function parseMarkdownFile(filePath, snippetId) {
 
     if (line.trim() === '---') continue;
     if (line.includes('Inspired by the teachings of Swami Chinmayananda')) continue;
+    if (line.includes('Based on the teachings of Swami Chinmayananda')) continue;
+    if (line.match(/^\*.*Swami Chinmayananda.*\*$/)) continue;
 
     if (currentSection) {
       sectionContent.push(line);
@@ -138,7 +140,12 @@ function parseMarkdownFile(filePath, snippetId) {
     } else if (section === 'understanding') {
       understanding = text;
     } else if (section === 'reflection') {
-      reflection = text;
+      // Clean up reflection - remove attribution lines
+      reflection = text
+        .replace(/\n*\*.*Swami Chinmayananda.*\*\n*/gi, '')
+        .replace(/\n*Based on the teachings of Swami Chinmayananda\n*/gi, '')
+        .replace(/\n*Inspired by the teachings of Swami Chinmayananda\n*/gi, '')
+        .trim();
     }
   }
 

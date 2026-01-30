@@ -8,6 +8,7 @@ export interface Snippet {
   verseTranslations: string[];
   commentary: string;
   reflection: string;
+  shortReflection?: string;
 }
 
 export interface StreakData {
@@ -52,8 +53,9 @@ export type AppAction =
   | { type: 'USE_STREAK_FREEZE' }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'RESET_PROGRESS' }
-  | { type: 'SIMULATE_PROGRESS'; payload: number };
+  | { type: 'SIMULATE_PROGRESS'; payload: number }
+  | { type: 'SYNC_STREAK' };
 
 export const TOTAL_SNIPPETS = 239;
 
-export const MILESTONES = [1, 3, 7, 10, 30, 60, 120, 239];
+export const MILESTONES = [1, 3, 7, 30, 100, 239];

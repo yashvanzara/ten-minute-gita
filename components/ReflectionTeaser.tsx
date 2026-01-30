@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useAppColorScheme } from '@/hooks/useAppColorScheme';
+import { useLanguage, hiFontSize, hiLineHeight } from '@/contexts/LanguageContext';
 
 interface ReflectionTeaserProps {
   reflection: string;
@@ -11,12 +12,13 @@ interface ReflectionTeaserProps {
 export function ReflectionTeaser({ reflection, isCompleted = false }: ReflectionTeaserProps) {
   const colorScheme = useAppColorScheme();
   const colors = Colors[colorScheme];
+  const { t, language } = useLanguage();
 
   // Show full first paragraph without truncation
   const firstParagraph = reflection.split('\n\n')[0].trim();
 
   // Change label based on completion status
-  const label = isCompleted ? "Reflect on Today" : "Today's Reflection";
+  const label = isCompleted ? t('reflection.reflectOnToday') : t('reflection.todaysReflection');
 
   return (
     <View style={[styles.card, { backgroundColor: colors.card }]}>
@@ -26,7 +28,7 @@ export function ReflectionTeaser({ reflection, isCompleted = false }: Reflection
           {label}
         </Text>
       </View>
-      <Text style={[styles.text, { color: colors.text }]}>
+      <Text style={[styles.text, { color: colors.text, fontSize: hiFontSize(15, language), lineHeight: hiLineHeight(hiFontSize(15, language), language) }]}>
         {firstParagraph}
       </Text>
     </View>

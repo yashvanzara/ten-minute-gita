@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, View, Text, Pressable } from 'react-native';
+import { ScrollView, StyleSheet, View, Text, Pressable, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 import { CalendarHeatmap } from '@/components/CalendarHeatmap';
 import { MilestoneCard } from '@/components/MilestoneCard';
@@ -10,6 +10,8 @@ import { useSnippets } from '@/hooks/useSnippets';
 import { useApp } from '@/contexts/AppContext';
 import Colors from '@/constants/Colors';
 import { useAppColorScheme } from '@/hooks/useAppColorScheme';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { LanguageToggle } from '@/components/LanguageToggle';
 
 export default function ProgressScreen() {
   const colorScheme = useAppColorScheme();
@@ -20,6 +22,7 @@ export default function ProgressScreen() {
   const { getSnippet } = useSnippets();
   const { state } = useApp();
   const { completedSnippets } = state.progress;
+  const { t, fadeAnim } = useLanguage();
 
   // Get current chapter from snippet data
   const currentSnippetData = getSnippet(currentSnippet);
@@ -41,28 +44,33 @@ export default function ProgressScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <View style={[styles.emptyStateCard, { backgroundColor: colors.card }]}>
-          <Text style={styles.emptyEmoji}>📖</Text>
-          <Text style={[styles.emptyTitle, { color: colors.text }]}>
-            Begin Your 239-Day Journey
-          </Text>
-          <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
-            Read the Bhagavad Gita in 10 minutes a day.{'\n'}
-            Your progress will appear here.
-          </Text>
-          <Pressable
-            style={({ pressed }) => [
-              styles.startButton,
-              { backgroundColor: colors.accent, opacity: pressed ? 0.8 : 1 },
-            ]}
-            onPress={handleStartJourney}
-          >
-            <Text style={styles.startButtonText}>Start Day 1</Text>
-          </Pressable>
+        <View style={styles.topRow}>
+          <View style={{ flex: 1 }} />
+          <LanguageToggle />
         </View>
+        <Animated.View style={{ opacity: fadeAnim }}>
+          <View style={[styles.emptyStateCard, { backgroundColor: colors.card }]}>
+            <Text style={styles.emptyEmoji}>📖</Text>
+            <Text style={[styles.emptyTitle, { color: colors.text }]}>
+              {t('progress.beginJourney')}
+            </Text>
+            <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
+              {t('progress.readGita')}
+            </Text>
+            <Pressable
+              style={({ pressed }) => [
+                styles.startButton,
+                { backgroundColor: colors.accent, opacity: pressed ? 0.8 : 1 },
+              ]}
+              onPress={handleStartJourney}
+            >
+              <Text style={styles.startButtonText}>{t('progress.startDay1')}</Text>
+            </Pressable>
+          </View>
 
-        {/* Show empty calendar */}
-        <CalendarHeatmap />
+          {/* Show empty calendar */}
+          <CalendarHeatmap />
+        </Animated.View>
       </ScrollView>
     );
   }
@@ -70,9 +78,9 @@ export default function ProgressScreen() {
   // Get streak display text
   const getStreakDisplay = () => {
     if (isZeroStreak) {
-      return hasEverCompleted ? 'Restart your streak' : 'Start your streak';
+      return hasEverCompleted ? t('progress.restartStreak') : t('progress.startStreak');
     }
-    return `${currentStreak} day streak`;
+    return t('progress.dayStreak', { count: currentStreak });
   };
 
   return (
@@ -81,49 +89,55 @@ export default function ProgressScreen() {
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
-      {/* HERO STATS */}
-      <View style={[styles.heroCard, { backgroundColor: colors.card }]}>
-        {/* Streak as hero */}
-        <View style={styles.streakSection}>
-          <Text style={styles.streakEmoji}>🔥</Text>
-          <Text style={[styles.streakText, { color: colors.streak }]}>
-            {getStreakDisplay()}
-          </Text>
-        </View>
-
-        {longestStreak > currentStreak && (
-          <Text style={[styles.personalBest, { color: colors.textSecondary }]}>
-            Personal best: {longestStreak} {longestStreak === 1 ? 'day' : 'days'}
-          </Text>
-        )}
-
-        {/* Journey progress bar */}
-        <View style={styles.journeySection}>
-          <View style={[styles.progressBarBg, { backgroundColor: colorScheme === 'dark' ? '#404040' : '#E8E8E8' }]}>
-            <View
-              style={[
-                styles.progressBarFill,
-                {
-                  backgroundColor: colors.accent,
-                  width: `${Math.max((completedCount / totalSnippets) * 100, 1)}%`,
-                },
-              ]}
-            />
-          </View>
-          <Text style={[styles.journeyText, { color: colors.text }]}>
-            Day {currentSnippet} of {totalSnippets} · Chapter {currentChapter}
-          </Text>
-        </View>
+      <View style={styles.topRow}>
+        <View style={{ flex: 1 }} />
+        <LanguageToggle />
       </View>
+      <Animated.View style={{ opacity: fadeAnim }}>
+        {/* HERO STATS */}
+        <View style={[styles.heroCard, { backgroundColor: colors.card }]}>
+          {/* Streak as hero */}
+          <View style={styles.streakSection}>
+            <Text style={styles.streakEmoji}>🔥</Text>
+            <Text style={[styles.streakText, { color: colors.streak }]}>
+              {getStreakDisplay()}
+            </Text>
+          </View>
 
-      {/* CALENDAR */}
-      <CalendarHeatmap />
+          {longestStreak > currentStreak && (
+            <Text style={[styles.personalBest, { color: colors.textSecondary }]}>
+              {t('progress.personalBest', { count: longestStreak })}
+            </Text>
+          )}
 
-      {/* MILESTONES */}
-      <MilestoneCard />
+          {/* Journey progress bar */}
+          <View style={styles.journeySection}>
+            <View style={[styles.progressBarBg, { backgroundColor: colorScheme === 'dark' ? '#404040' : '#E8E8E8' }]}>
+              <View
+                style={[
+                  styles.progressBarFill,
+                  {
+                    backgroundColor: colors.accent,
+                    width: `${Math.max((completedCount / totalSnippets) * 100, 1)}%`,
+                  },
+                ]}
+              />
+            </View>
+            <Text style={[styles.journeyText, { color: colors.text }]}>
+              {t('progress.dayOfTotalChapter', { day: currentSnippet, total: totalSnippets, chapter: currentChapter })}
+            </Text>
+          </View>
+        </View>
 
-      {/* COMPLETED READINGS */}
-      <CompletedReadingsList />
+        {/* CALENDAR */}
+        <CalendarHeatmap />
+
+        {/* MILESTONES */}
+        <MilestoneCard />
+
+        {/* COMPLETED READINGS */}
+        <CompletedReadingsList />
+      </Animated.View>
     </ScrollView>
   );
 }
@@ -135,6 +149,12 @@ const styles = StyleSheet.create({
   content: {
     paddingVertical: 16,
     paddingBottom: 32,
+  },
+  topRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    marginBottom: 4,
   },
 
   // Hero Stats
