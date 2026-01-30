@@ -348,21 +348,57 @@
         footer .links a:hover { color: #E07A5F; opacity: 1; }
 
         /* Responsive */
-        @media (max-width: 640px) {
-            .hero { padding: 72px 20px 48px; }
-            .hero h1 { font-size: 38px; }
-            .hero .tagline { font-size: 17px; }
-            .stats { gap: 32px; }
+        @media (max-width: 768px) {
+            .hero { padding: 60px 20px 40px; }
+            .hero h1 { font-size: 36px; letter-spacing: -0.5px; }
+            .hero .subtitle { font-size: 12px; letter-spacing: 2px; }
+            .hero .tagline { font-size: 16px; margin-bottom: 28px; }
+            .glow { width: 350px; height: 350px; top: -50px; }
+            .hero-icon { font-size: 56px; }
+            .app-store-badge img { height: 44px; }
+            .cta-group { flex-direction: column; gap: 12px; }
+            .cta-secondary { padding: 12px 24px; font-size: 14px; }
+
+            .stats { gap: 20px; padding: 36px 16px; flex-wrap: wrap; }
             .stat .number { font-size: 28px; }
+            .stat .label { font-size: 11px; letter-spacing: 1px; }
+
+            .features-section { padding: 48px 16px; }
+            .section-label { font-size: 11px; letter-spacing: 2px; }
+            .section-title { font-size: 24px; margin-bottom: 32px; }
             .features { grid-template-columns: 1fr 1fr; gap: 12px; }
-            .feature-card { padding: 24px 16px; }
-            .section-title { font-size: 26px; }
-            .journey h2 { font-size: 26px; }
-            .quote { font-size: 17px; }
+            .feature-card { padding: 20px 14px; border-radius: 14px; }
+            .feature-card .emoji { font-size: 32px; margin-bottom: 10px; }
+            .feature-card h3 { font-size: 15px; margin-bottom: 6px; }
+            .feature-card p { font-size: 13px; }
+
+            .daily-section { padding: 48px 16px; }
+            .daily-list li { gap: 12px; padding: 14px 0; }
+            .daily-list .icon { width: 36px; height: 36px; font-size: 20px; border-radius: 8px; }
+            .daily-list .text h4 { font-size: 15px; }
+            .daily-list .text p { font-size: 13px; }
+
+            .quote-section { padding: 36px 20px; }
+            .quote { font-size: 17px; padding: 0 12px; }
+            .quote::before { font-size: 48px; top: -16px; left: -4px; }
+            .quote-attr { font-size: 13px; }
+
+            .journey { padding: 48px 20px; }
+            .journey h2 { font-size: 24px; }
+            .journey p { font-size: 15px; }
+            .journey .closing { font-size: 16px; }
+            .sanskrit { font-size: 18px; margin-top: 24px; }
+
+            footer { padding: 32px 16px; }
         }
         @media (max-width: 380px) {
+            .hero h1 { font-size: 30px; }
+            .hero .tagline { font-size: 15px; }
+            .stats { flex-direction: column; gap: 16px; }
             .features { grid-template-columns: 1fr; }
-            .stats { flex-direction: column; gap: 20px; }
+            .feature-card { padding: 24px 20px; }
+            .quote { font-size: 16px; }
+            .sanskrit { font-size: 16px; }
         }
     </style>
 </head>
