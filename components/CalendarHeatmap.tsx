@@ -5,6 +5,7 @@ import { useProgress } from '@/hooks/useProgress';
 import Colors from '@/constants/Colors';
 import { useAppColorScheme } from '@/hooks/useAppColorScheme';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { getDateString } from '@/utils/storage';
 
 interface DayData {
   date: string;
@@ -24,17 +25,9 @@ export function CalendarHeatmap() {
   // Generate 12 weeks of calendar data ending at today
   // Orientation: Days as COLUMNS (S M T W T F S), Weeks as ROWS
   const { weeks, readDaysCount } = useMemo(() => {
-    // Use local date string format (YYYY-MM-DD) to match storage format
-    const getLocalDateStr = (date: Date): string => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    };
-
     const today = new Date();
     today.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
-    const todayStr = getLocalDateStr(today);
+    const todayStr = getDateString(today);
 
     // Calculate start date: 11 weeks ago from start of current week
     const startOfCurrentWeek = new Date(today);
@@ -50,7 +43,7 @@ export function CalendarHeatmap() {
     for (let week = 0; week < 12; week++) {
       const weekData: DayData[] = [];
       for (let day = 0; day < 7; day++) {
-        const dateStr = getLocalDateStr(currentDate);
+        const dateStr = getDateString(currentDate);
         const isToday = dateStr === todayStr;
         const isPast = currentDate <= today;
         const snippetId = readingHistory[dateStr] ?? null;

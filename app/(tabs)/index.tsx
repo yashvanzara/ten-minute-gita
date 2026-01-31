@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ScrollView, StyleSheet, View, Text, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 import { TodayCard } from '@/components/TodayCard';
@@ -14,8 +14,10 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useFirstTimeUser } from '@/contexts/FTUEContext';
 import Colors from '@/constants/Colors';
 import { useAppColorScheme } from '@/hooks/useAppColorScheme';
+import { trackScreenView } from '@/utils/sentry';
 
 export default function HomeScreen() {
+  useEffect(() => { trackScreenView('Home'); }, []);
   const colorScheme = useAppColorScheme();
   const colors = Colors[colorScheme];
   const router = useRouter();

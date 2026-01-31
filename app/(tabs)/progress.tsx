@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ScrollView, StyleSheet, View, Text, Pressable, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 import { CalendarHeatmap } from '@/components/CalendarHeatmap';
@@ -12,8 +12,10 @@ import Colors from '@/constants/Colors';
 import { useAppColorScheme } from '@/hooks/useAppColorScheme';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from '@/components/LanguageToggle';
+import { trackScreenView } from '@/utils/sentry';
 
 export default function ProgressScreen() {
+  useEffect(() => { trackScreenView('Progress'); }, []);
   const colorScheme = useAppColorScheme();
   const colors = Colors[colorScheme];
   const router = useRouter();

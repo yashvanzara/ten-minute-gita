@@ -4,6 +4,7 @@ import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Colors from '@/constants/Colors';
 import { useAppColorScheme } from '@/hooks/useAppColorScheme';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
 
 interface WelcomeBannerProps {
   visible: boolean;
@@ -14,20 +15,30 @@ export function WelcomeBanner({ visible, onDismiss }: WelcomeBannerProps) {
   const colorScheme = useAppColorScheme();
   const colors = Colors[colorScheme];
   const { t } = useLanguage();
+  const reducedMotion = useReducedMotion();
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
 
   useEffect(() => {
     if (visible) {
-      Animated.parallel([
-        Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }),
-        Animated.spring(scaleAnim, { toValue: 1, tension: 60, friction: 8, useNativeDriver: true }),
-      ]).start();
+      if (reducedMotion) {
+        fadeAnim.setValue(1);
+        scaleAnim.setValue(1);
+      } else {
+        Animated.parallel([
+          Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }),
+          Animated.spring(scaleAnim, { toValue: 1, tension: 60, friction: 8, useNativeDriver: true }),
+        ]).start();
+      }
     }
-  }, [visible]);
+  }, [visible, reducedMotion]);
 
   const handleDismiss = () => {
+    if (reducedMotion) {
+      onDismiss();
+      return;
+    }
     Animated.parallel([
       Animated.timing(fadeAnim, { toValue: 0, duration: 200, useNativeDriver: true }),
       Animated.timing(scaleAnim, { toValue: 0.9, duration: 200, useNativeDriver: true }),
@@ -73,6 +84,8 @@ export function WelcomeBanner({ visible, onDismiss }: WelcomeBannerProps) {
                   { backgroundColor: colors.accent, opacity: pressed ? 0.85 : 1 },
                 ]}
                 onPress={handleDismiss}
+                accessibilityRole="button"
+                accessibilityLabel={t('ftue.getStarted')}
               >
                 <Text style={styles.continueText}>{t('ftue.getStarted')}</Text>
               </Pressable>

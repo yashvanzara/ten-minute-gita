@@ -6,10 +6,14 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 
+import { initSentry } from '@/utils/sentry';
 import { useAppColorScheme } from '@/hooks/useAppColorScheme';
+
+initSentry();
 import { AppProvider } from '@/contexts/AppContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { FTUEProvider } from '@/contexts/FTUEContext';
+import { AppErrorBoundary } from '@/components/ErrorBoundary';
 import Colors from '@/constants/Colors';
 
 export {
@@ -43,13 +47,15 @@ export default function RootLayout() {
   }
 
   return (
-    <LanguageProvider>
-      <FTUEProvider>
-        <AppProvider>
-          <RootLayoutNav />
-        </AppProvider>
-      </FTUEProvider>
-    </LanguageProvider>
+    <AppErrorBoundary>
+      <LanguageProvider>
+        <FTUEProvider>
+          <AppProvider>
+            <RootLayoutNav />
+          </AppProvider>
+        </FTUEProvider>
+      </LanguageProvider>
+    </AppErrorBoundary>
   );
 }
 
@@ -89,6 +95,13 @@ function RootLayoutNav() {
     <ThemeProvider value={colorScheme === 'dark' ? customDarkTheme : customLightTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="completed-readings"
+          options={{
+            headerShown: true,
+            animation: 'slide_from_right',
+          }}
+        />
         <Stack.Screen
           name="reading/[id]"
           options={{

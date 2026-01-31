@@ -121,14 +121,14 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         // Create date strings going back from today
         const date = new Date();
         date.setDate(date.getDate() - (targetDay - i));
-        const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        const dateStr = getDateString(date);
         readingHistory[dateStr] = i;
       }
 
       // lastReadDate should be yesterday so streak is maintained but today's reading isn't done
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
-      const lastReadDateStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+      const lastReadDateStr = getDateString(yesterday);
 
       const newProgress: UserProgress = {
         ...state.progress,

@@ -42,7 +42,8 @@
           "icon": "./assets/images/notification-icon.png",
           "color": "#E07A5F"
         }
-      ]
+      ],
+      "@sentry/react-native"
     ],
     "experiments": {
       "typedRoutes": true

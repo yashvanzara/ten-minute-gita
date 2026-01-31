@@ -48,7 +48,7 @@ export function CompletedReadingsList() {
       <View style={styles.header}>
         <Text style={[styles.title, { color: colors.text }]}>{t('completedList.completedReadings')}</Text>
         {hasMore && (
-          <Pressable onPress={() => {/* TODO: Open full list modal */}}>
+          <Pressable onPress={() => router.push('/completed-readings')}>
             <Text style={[styles.viewAll, { color: colors.accent }]}>
               {t('completedList.viewAll', { count: completedSnippets.length })}
             </Text>

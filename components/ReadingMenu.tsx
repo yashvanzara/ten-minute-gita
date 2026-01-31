@@ -42,6 +42,9 @@ export function ReadingMenu() {
         onStartShouldSetResponder={() => true}
         onResponderRelease={open}
         style={styles.trigger}
+        accessible={true}
+        accessibilityRole="button"
+        accessibilityLabel="Reading options menu"
       >
         <Ionicons name="ellipsis-vertical" size={20} color={colors.text} />
       </View>

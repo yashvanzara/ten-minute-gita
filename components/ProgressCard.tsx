@@ -58,6 +58,8 @@ export function ProgressCard() {
           { backgroundColor: colors.accent, opacity: pressed ? 0.8 : 1 },
         ]}
         onPress={handleContinue}
+        accessibilityRole="button"
+        accessibilityLabel={isComplete ? t('progressCard.readAgain') : completedCount === 0 ? t('progressCard.startReading') : t('progressCard.continueReading')}
       >
         <Text style={styles.continueButtonText}>
           {isComplete ? t('progressCard.readAgain') : completedCount === 0 ? t('progressCard.startReading') : t('progressCard.continueReading')}

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CONFIG } from '@/constants/config';
+import { logger } from '@/utils/logger';
 
 const STORAGE_KEY = CONFIG.FTUE_KEY;
 
@@ -35,7 +36,7 @@ export function FTUEProvider({ children }: { children: React.ReactNode }) {
       if (stored) {
         try {
           setState({ ...DEFAULT_STATE, ...JSON.parse(stored) });
-        } catch {}
+        } catch (e) { logger.error('Failed to parse FTUE state', e); }
       }
       setLoaded(true);
     });

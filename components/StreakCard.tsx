@@ -22,8 +22,8 @@ export function StreakCard() {
         )}
       </View>
 
-      <View style={styles.streakRow}>
-        <Text style={[styles.fireEmoji]}>🔥</Text>
+      <View style={styles.streakRow} accessible={true} accessibilityLabel={t('streak.dayStreak', { count: current })}>
+        <Text style={[styles.fireEmoji]} importantForAccessibility="no">🔥</Text>
         <Text style={[styles.streakNumber, { color: colors.streak }]}>{current}</Text>
         <Text style={[styles.streakLabel, { color: colors.textSecondary }]}>
           {t('streak.dayStreak', { count: current })}
@@ -51,6 +51,8 @@ export function StreakCard() {
         <Pressable
           style={[styles.freezeButton, { backgroundColor: colors.accent }]}
           onPress={useFreeze}
+          accessibilityRole="button"
+          accessibilityLabel={t('streakCard.useStreakFreeze', { count: freezesAvailable })}
         >
           <Text style={styles.freezeButtonText}>{t('streakCard.useStreakFreeze', { count: freezesAvailable })}</Text>
         </Pressable>

@@ -124,6 +124,9 @@ export const en = {
   // CompletedReadingsList
   'completedList.completedReadings': 'Completed Readings',
   'completedList.viewAll': 'View All ({{count}})',
+  'completedList.allReadings': 'All Readings',
+  'completedList.searchPlaceholder': 'Search readings...',
+  'completedList.noResults': 'No matching readings',
 
   // Progress screen
   'progress.beginJourney': 'Begin Your 239-Day Journey',
@@ -161,7 +164,7 @@ export const en = {
   'settings.rateApp': 'Rate 10 Minute Gita',
   'settings.shareWithFriends': 'Share with Friends',
   'settings.sendFeedback': 'Send Feedback',
-  'settings.shareMessage': "I'm on Day {{day}} of reading the Bhagavad Gita in just 10 minutes a day. Join me on this 239-day journey! 🙏",
+  'settings.shareMessage': "I'm on Day {{day}} of reading the Bhagavad Gita in just 10 minutes a day. Join me on this 239-day journey! 🙏\n\nDownload: https://apps.apple.com/app/10-minute-gita/id6758332047",
   'settings.emailUs': 'Email us at:\n{{email}}',
   'settings.copyEmail': 'Copy Email',
   'settings.yourData': 'Your Data',

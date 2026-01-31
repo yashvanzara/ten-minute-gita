@@ -13,9 +13,9 @@ npx expo start          # Start dev server (Expo Go)
 npx tsc --noEmit        # Type-check (run after every change)
 npx expo run:ios        # Native iOS build
 npx expo run:android    # Native Android build
+npm test                # Run Jest tests
+npx jest --watch        # Watch mode
 ```
-
-No test suite exists yet.
 
 ## Architecture
 
@@ -24,6 +24,7 @@ No test suite exists yet.
 - `app/_layout.tsx` — Root layout, nests providers: `LanguageProvider > FTUEProvider > AppProvider > RootLayoutNav`
 - `app/(tabs)/` — Tab navigator: Home (`index.tsx`), Progress (`progress.tsx`), Settings (`settings.tsx`)
 - `app/reading/[id].tsx` — Reading screen for day 1–239, supports swipe navigation
+- `app/completed-readings.tsx` — Full-screen search page for all completed readings (search across title, verses, commentary, reflection, Sanskrit, transliteration)
 
 ### State & Data
 
@@ -31,14 +32,16 @@ No test suite exists yet.
 - **LanguageContext** — Provides `language` (en/hi) and `t(key, params?)` function. Persists to AsyncStorage.
 - **FTUEContext** — First-time user experience flow state. Persists to AsyncStorage.
 - **AsyncStorage keys:** `@gita_app_progress`, `@ftue_state`, `@language` (defined in `constants/config.ts`)
-- **Content data:** `data/gita_snippets.json` (EN), `data/gita_snippets_hindi.json` (HI) — 239 snippets with Sanskrit verses, transliteration, translation, commentary, reflection.
+- **Content data:** `data/gita_snippets.json` (EN), `data/gita_snippets_hindi.json` (HI) — 239 snippets with Sanskrit verses, transliteration, translation, commentary, reflection. Hindi verse translations were extracted from commentary fields; titles have "Day N:" / "दिन N:" prefixes stripped.
+- **Search highlight:** `utils/searchHighlight.ts` — Module-level global store with monotonic counter. `setSearchHighlight()` before navigation, `getSearchHighlight()` on mount in reading screen. Module-level `_lastConsumedHighlightId` in `reading/[id].tsx` ensures each highlight is consumed exactly once across component mounts.
 
 ### Key Files by Size
 
 | File | Lines | Notes |
 |------|-------|-------|
-| `components/SnippetContent.tsx` | 696 | Largest file — renders verse content |
-| `app/reading/[id].tsx` | 316 | Reading screen with swipe nav |
+| `components/SnippetContent.tsx` | ~274 | Renders verse content, search highlighting, auto-scroll (sub-components in `components/snippet/`) |
+| `app/reading/[id].tsx` | ~330 | Reading screen with swipe nav, search highlight consumption |
+| `app/completed-readings.tsx` | ~400 | Search page with debounced full-text search, context previews |
 | `components/TodayCard.tsx` | 263 | Home screen CTA card |
 | `components/NotificationPrompt.tsx` | 259 | FTUE notification prompt |
 | `app/(tabs)/index.tsx` | 241 | Home screen |
@@ -71,12 +74,33 @@ Split into `constants/translations/en.ts` and `constants/translations/hi.ts`. Ke
 - **Logging** uses `utils/logger.ts` which guards behind `__DEV__` — never use bare `console.error/warn/log`
 - **Settings screen** is composed of 5 sub-components in `components/settings/`
 - **Reading screen** uses extracted hooks: `useMidnightTimer`, `useSwipeNavigation`
+- **Header back button** pattern: use `useLayoutEffect` + `navigation.setOptions` with `headerBackVisible: false` and custom `headerLeft` using `Ionicons chevron-back` (not inline Stack.Screen options)
 - `expo-store-review` must be **dynamically imported** (`await import(...)`) with try/catch — it crashes in Expo Go if imported at top level
 - Theme colors defined in `constants/Colors.ts` with `light` and `dark` variants
 
+## Deployment
+
+```bash
+npx eas-cli build --platform ios --profile production --non-interactive --no-wait
+npx eas-cli submit --platform ios --latest   # after build finishes
+```
+
+## Error Handling & Monitoring
+
+- Custom `AppErrorBoundary` wraps the app in `_layout.tsx`
+- Sentry crash reporting configured via `utils/sentry.ts` (requires `EXPO_PUBLIC_SENTRY_DSN` env var)
+- `trackScreenView()` and `trackEvent()` in `utils/sentry.ts` log breadcrumbs for screen views (Home, Progress, Reading) and user actions (reading_complete)
+- `useReducedMotion` hook respects user accessibility preferences for animations
+
+## Testing
+
+- Jest with `jest-expo` preset, 53 tests across 7 suites
+- **Unit tests:** appReducer, storage utils, searchHighlight store
+- **Component tests:** NavigationControls (button states, callbacks, disabled states), HighlightText (highlighting, case-insensitive), Paragraph (empty, trim, highlight)
+- **Integration test:** Full reading → complete → streak flow (multi-day journey, streak break, freeze, reset)
+- AsyncStorage mocked in `__tests__/setup.ts`
+- CI: GitHub Actions runs `tsc --noEmit` and `jest --ci --coverage` on push/PR to main
+
 ## Known Tech Debt
 
-- `components/SnippetContent.tsx` (696 lines) — candidate for splitting
-- `hooks/useFirstTimeUser.ts` duplicates logic in `contexts/FTUEContext.tsx`
-- `components/CompletedReadingsList.tsx:51` — `TODO: Open full list modal`
-- No test suite
+- `app/completed-readings.tsx` (~400 lines) could benefit from extraction

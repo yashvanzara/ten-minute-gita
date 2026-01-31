@@ -68,8 +68,10 @@ export function SupportSection({ colors, t, currentDay, onResetProgress }: Suppo
         <Pressable
           style={({ pressed }) => [styles.actionRow, { opacity: pressed ? 0.7 : 1 }]}
           onPress={handleRateApp}
+          accessibilityRole="button"
+          accessibilityLabel={t('settings.rateApp')}
         >
-          <Text style={styles.actionIcon}>⭐</Text>
+          <Text style={styles.actionIcon} importantForAccessibility="no">⭐</Text>
           <Text style={[styles.actionLabel, { color: colors.text }]}>{t('settings.rateApp')}</Text>
           <Text style={[styles.chevron, { color: colors.textSecondary }]}>›</Text>
         </Pressable>
@@ -79,8 +81,10 @@ export function SupportSection({ colors, t, currentDay, onResetProgress }: Suppo
         <Pressable
           style={({ pressed }) => [styles.actionRow, { opacity: pressed ? 0.7 : 1 }]}
           onPress={handleShare}
+          accessibilityRole="button"
+          accessibilityLabel={t('settings.shareWithFriends')}
         >
-          <Text style={styles.actionIcon}>📤</Text>
+          <Text style={styles.actionIcon} importantForAccessibility="no">📤</Text>
           <Text style={[styles.actionLabel, { color: colors.text }]}>{t('settings.shareWithFriends')}</Text>
           <Text style={[styles.chevron, { color: colors.textSecondary }]}>›</Text>
         </Pressable>
@@ -90,8 +94,10 @@ export function SupportSection({ colors, t, currentDay, onResetProgress }: Suppo
         <Pressable
           style={({ pressed }) => [styles.actionRow, { opacity: pressed ? 0.7 : 1 }]}
           onPress={handleSendFeedback}
+          accessibilityRole="button"
+          accessibilityLabel={t('settings.sendFeedback')}
         >
-          <Text style={styles.actionIcon}>💬</Text>
+          <Text style={styles.actionIcon} importantForAccessibility="no">💬</Text>
           <Text style={[styles.actionLabel, { color: colors.text }]}>{t('settings.sendFeedback')}</Text>
           <Text style={[styles.chevron, { color: colors.textSecondary }]}>›</Text>
         </Pressable>
@@ -104,8 +110,10 @@ export function SupportSection({ colors, t, currentDay, onResetProgress }: Suppo
         <Pressable
           style={({ pressed }) => [styles.actionRow, { opacity: pressed ? 0.7 : 1 }]}
           onPress={onResetProgress}
+          accessibilityRole="button"
+          accessibilityLabel={t('settings.resetAllProgress')}
         >
-          <Text style={styles.actionIcon}>🗑️</Text>
+          <Text style={styles.actionIcon} importantForAccessibility="no">🗑️</Text>
           <Text style={[styles.actionLabel, { color: '#DC3545' }]}>{t('settings.resetAllProgress')}</Text>
           <Text style={[styles.chevron, { color: colors.textSecondary }]}>›</Text>
         </Pressable>

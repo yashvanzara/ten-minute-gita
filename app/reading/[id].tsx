@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useLayoutEffect } from 'react';
+import React, { useMemo, useState, useLayoutEffect, useEffect } from 'react';
 import { MILESTONES } from '@/types';
 import {
   View,
@@ -17,12 +17,17 @@ import { useMidnightTimer } from '@/components/reading/MidnightTimer';
 import { useSwipeNavigation } from '@/hooks/useSwipeNavigation';
 import { useSnippets } from '@/hooks/useSnippets';
 import { useApp } from '@/contexts/AppContext';
+import { getDateString } from '@/utils/storage';
 import { useProgress } from '@/hooks/useProgress';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useFirstTimeUser } from '@/contexts/FTUEContext';
 import Colors from '@/constants/Colors';
 import { useAppColorScheme } from '@/hooks/useAppColorScheme';
 import { CONFIG } from '@/constants/config';
+import { getSearchHighlight } from '@/utils/searchHighlight';
+import { trackScreenView } from '@/utils/sentry';
+
+let _lastConsumedHighlightId = 0;
 
 export default function ReadingScreen() {
   const { id, mode } = useLocalSearchParams<{ id: string; mode?: string }>();
@@ -62,11 +67,25 @@ export default function ReadingScreen() {
 
   const snippetId = parseInt(id || '1', 10);
   const snippet = useMemo(() => getSnippet(snippetId), [snippetId, getSnippet]);
+
+  useEffect(() => {
+    trackScreenView('Reading', { day: snippetId });
+  }, [snippetId]);
+
+  // Read search highlight — module-level counter ensures each setSearchHighlight
+  // is consumed exactly once, regardless of component mount/unmount/remount.
+  const [searchHighlight, setSearchHighlightState] = useState<{ query: string; section: string } | null>(() => {
+    const h = getSearchHighlight();
+    if (h && h.id !== _lastConsumedHighlightId) {
+      _lastConsumedHighlightId = h.id;
+      return { query: h.query, section: h.section };
+    }
+    return null;
+  });
   const isCompleted = completedSnippets.includes(snippetId);
   const isNextToRead = snippetId === currentSnippet;
 
-  const now = new Date();
-  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const today = getDateString();
   const hasReadToday = today in readingHistory;
 
   const isReviewMode = isCompleted;
@@ -106,6 +125,17 @@ export default function ReadingScreen() {
 
     if (!hasCompletedFirstReading && newCompletedCount === 1) {
       markFirstReadingComplete();
+    }
+
+    // Prompt for App Store rating at Day 3 or Day 7
+    if (newCompletedCount === 3 || newCompletedCount === 7) {
+      import('expo-store-review').then(async (StoreReview) => {
+        try {
+          if (await StoreReview.isAvailableAsync()) {
+            await StoreReview.requestReview();
+          }
+        } catch { /* store review not critical */ }
+      });
     }
 
     if (milestone) {
@@ -224,6 +254,8 @@ export default function ReadingScreen() {
               unlockTime={isNextDay ? timeUntilMidnight : undefined}
               lockMessage={isFutureDay ? t('reading.completeDayFirst', { day: currentSnippet }) : undefined}
               onScrollProgress={showReadingProgress ? handleScrollProgress : undefined}
+              highlightQuery={searchHighlight?.query}
+              highlightSection={searchHighlight?.section}
             />
           </Animated.View>
         </PanGestureHandler>

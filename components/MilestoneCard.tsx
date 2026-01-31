@@ -63,7 +63,12 @@ export function MilestoneCard() {
       <View style={styles.header}>
         <Text style={[styles.title, { color: colors.text }]}>{t('milestoneCard.milestones')}</Text>
         {hasHiddenMilestones && (
-          <Pressable onPress={() => setIsExpanded(!isExpanded)} hitSlop={8}>
+          <Pressable
+            onPress={() => setIsExpanded(!isExpanded)}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel={isExpanded ? t('milestoneCard.showLess') : t('milestoneCard.seeAll')}
+          >
             <Text style={[styles.expandButton, { color: colors.accent }]}>
               {isExpanded ? t('milestoneCard.showLess') : t('milestoneCard.seeAll')}
             </Text>
@@ -78,6 +83,8 @@ export function MilestoneCard() {
           return (
             <View
               key={days}
+              accessible={true}
+              accessibilityLabel={`${getMilestoneLabel(days)}, ${getToGoText(days, achieved)}`}
               style={[
                 styles.milestone,
                 {

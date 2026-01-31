@@ -6,6 +6,7 @@ import {
   resetProgress,
 } from '@/utils/storage';
 import { appReducer, initialState } from '@/reducers/appReducer';
+import { trackEvent } from '@/utils/sentry';
 
 interface AppContextType {
   state: typeof initialState;
@@ -41,6 +42,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const markComplete = (snippetId: number) => {
     dispatch({ type: 'MARK_COMPLETE', payload: snippetId });
+    trackEvent('reading_complete', { day: snippetId, totalCompleted: state.progress.completedSnippets.length + 1 });
   };
 
   const updateSettings = (settings: Partial<Settings>) => {
