@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, TextInput } from 'react-native';
 import { HighlightText } from './HighlightText';
 
 export function FormattedText({
@@ -15,6 +15,21 @@ export function FormattedText({
   italicColor?: string;
   highlightQuery?: string;
 }) {
+  const hasItalics = /(?<!\*)\*(?!\*)/.test(text);
+
+  // No italics and no highlight → use TextInput for native word selection & Look Up
+  if (!hasItalics && (!highlightQuery || !highlightQuery.trim())) {
+    return (
+      <TextInput
+        value={text}
+        editable={false}
+        multiline
+        scrollEnabled={false}
+        style={[{ color, padding: 0 }, style]}
+      />
+    );
+  }
+
   const result: React.ReactNode[] = [];
   let remaining = text;
   let key = 0;
@@ -40,5 +55,5 @@ export function FormattedText({
     }
   }
 
-  return <Text style={style}>{result}</Text>;
+  return <Text selectable style={style}>{result}</Text>;
 }

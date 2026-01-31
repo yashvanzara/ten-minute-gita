@@ -1,9 +1,21 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, TextInput, StyleSheet } from 'react-native';
 
 export function HighlightText({ text, query, color, style }: { text: string; query?: string; color: string; style?: any }) {
-  if (!query || !query.trim()) return <Text style={[{ color }, style]}>{text}</Text>;
+  // No active search highlight → use TextInput for native word-level selection & Look Up
+  if (!query || !query.trim()) {
+    return (
+      <TextInput
+        value={text}
+        editable={false}
+        multiline
+        scrollEnabled={false}
+        style={[{ color, padding: 0 }, style]}
+      />
+    );
+  }
 
+  // Active search highlight → use nested Text (copy-all only, but highlights are brief)
   const parts: React.ReactNode[] = [];
   const lower = text.toLowerCase();
   const qLower = query.toLowerCase();
@@ -26,5 +38,5 @@ export function HighlightText({ text, query, color, style }: { text: string; que
   if (lastIdx < text.length) {
     parts.push(<Text key={key++} style={{ color }}>{text.slice(lastIdx)}</Text>);
   }
-  return <Text style={style}>{parts}</Text>;
+  return <Text selectable style={style}>{parts}</Text>;
 }

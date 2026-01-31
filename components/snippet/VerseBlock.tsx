@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { HighlightText } from './HighlightText';
 
 interface VerseBlockProps {
@@ -31,21 +31,29 @@ export function VerseBlock({
   return (
     <View style={[styles.verseBlock, !isLast && styles.verseBlockBorder, { borderBottomColor: colors.border }]}>
       {showSanskrit && sanskrit && (
-        <Text style={[
-          styles.sanskritText,
-          { color: colors.text, fontSize: fontSize + 3, lineHeight: (fontSize + 3) * 1.5 }
-        ]}>
-          {sanskrit}
-        </Text>
+        <TextInput
+          value={sanskrit}
+          editable={false}
+          multiline
+          scrollEnabled={false}
+          style={[
+            styles.sanskritText,
+            { color: colors.text, fontSize: fontSize + 3, lineHeight: (fontSize + 3) * 1.5, padding: 0 }
+          ]}
+        />
       )}
 
       {showTransliteration && transliteration && (
-        <Text style={[
-          styles.translitText,
-          { color: colors.textSecondary, fontSize: fontSize - 2, lineHeight: (fontSize - 2) * 1.4 }
-        ]}>
-          {transliteration}
-        </Text>
+        <TextInput
+          value={transliteration}
+          editable={false}
+          multiline
+          scrollEnabled={false}
+          style={[
+            styles.translitText,
+            { color: colors.textSecondary, fontSize: fontSize - 2, lineHeight: (fontSize - 2) * 1.4, padding: 0 }
+          ]}
+        />
       )}
 
       {showTranslation && translation && (

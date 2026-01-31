@@ -125,7 +125,7 @@ export function SnippetContent({ snippet, isContentLocked = false, isPreviewLimi
           <View style={[styles.versesContainer, { backgroundColor: colors.card }]}>
             <View style={[styles.versesAccent, { backgroundColor: colors.accent }]} />
             <View style={styles.versesContent}>
-              <Text style={[styles.sanskritPreview, { color: colors.text, fontSize: fontSize + 3, lineHeight: (fontSize + 3) * 1.5 }]}>
+              <Text selectable style={[styles.sanskritPreview, { color: colors.text, fontSize: fontSize + 3, lineHeight: (fontSize + 3) * 1.5 }]}>
                 {sanskritVerses[0]?.split('\n')[0] || ''}...
               </Text>
             </View>
