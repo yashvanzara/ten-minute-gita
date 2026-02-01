@@ -26,8 +26,9 @@ describe('Paragraph', () => {
 
   it('renders with highlight query', () => {
     const { getByText } = render(
-      <Paragraph text="Karma yoga" fontSize={16} color="#000" highlightQuery="karma" />
+      <Paragraph text="*Karma* yoga" fontSize={16} color="#000" highlightQuery="karma" />
     );
     expect(getByText('Karma')).toBeTruthy();
+    expect(getByText(' yoga')).toBeTruthy();
   });
 });

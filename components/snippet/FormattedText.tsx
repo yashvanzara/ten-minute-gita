@@ -42,15 +42,15 @@ export function FormattedText({
     if (match && match.index !== undefined) {
       if (match.index > 0) {
         const before = remaining.substring(0, match.index).replace(/§§BOLD§§/g, '**');
-        result.push(<HighlightText key={key++} text={before} query={highlightQuery} color={color} />);
+        result.push(<Text key={key++} style={{ color }}>{before}</Text>);
       }
       result.push(
-        <HighlightText key={key++} text={match[1]} query={highlightQuery} color={italicColor || color} style={{ fontStyle: 'italic' }} />
+        <Text key={key++} style={{ color: italicColor || color, fontStyle: 'italic' }}>{match[1]}</Text>
       );
       remaining = remaining.substring(match.index + match[0].length);
     } else {
       const final = remaining.replace(/§§BOLD§§/g, '**');
-      result.push(<HighlightText key={key++} text={final} query={highlightQuery} color={color} />);
+      result.push(<Text key={key++} style={{ color }}>{final}</Text>);
       break;
     }
   }
