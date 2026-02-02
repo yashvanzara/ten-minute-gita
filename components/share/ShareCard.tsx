@@ -43,10 +43,14 @@ export const ShareCard = React.forwardRef<View, ShareCardProps>(
               </Text>
             )}
             <Text
-              style={[styles.mainText, { color: textColor, fontSize: 44 * textScale, lineHeight: 64 * textScale }]}
-              numberOfLines={CONFIG.SHARE_CARD.MAX_TEXT_LINES}
+              style={[styles.mainText, {
+                color: textColor,
+                fontSize: (content.type === 'reflection' ? 36 : 44) * textScale,
+                lineHeight: (content.type === 'reflection' ? 52 : 64) * textScale,
+              }]}
+              numberOfLines={content.type === 'reflection' ? 12 : CONFIG.SHARE_CARD.MAX_TEXT_LINES}
               adjustsFontSizeToFit
-              minimumFontScale={0.6}
+              minimumFontScale={0.7}
             >
               {content.text}
             </Text>
@@ -54,7 +58,7 @@ export const ShareCard = React.forwardRef<View, ShareCardProps>(
 
           {/* Reference */}
           <Text style={[styles.reference, { color: subtextColor }]}>
-            {content.reference}
+            {content.type === 'reflection' ? `Day ${content.dayNumber} of 239` : content.reference}
           </Text>
 
           {/* Watermark */}

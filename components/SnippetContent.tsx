@@ -91,7 +91,7 @@ export function SnippetContent({ snippet, isContentLocked = false, isPreviewLimi
     return snippet.reflection.split(/\n\n+/).map(p => p.replace(/\n/g, ' ').trim()).filter(p => p.length > 0);
   }, [snippet.reflection]);
 
-  const displayTitle = snippet.title.replace(/^Day \d+:\s*/, '');
+  const displayTitle = snippet.title.replace(/^(Day \d+:\s*|दिन\s*\d+[:\s]*)/, '');
   const verseCount = Math.max(sanskritVerses.length, snippet.verseTranslations.length);
 
   return (

@@ -142,12 +142,12 @@ export default function ReadingScreen() {
       });
     }
 
-    const verseText = snippet?.verseTranslations?.[0] || '';
+    const reflectionText = snippet?.shortReflection || snippet?.verseTranslations?.[0] || '';
     const sanskritFirst = snippet?.sanskrit?.split('\n')[0] || '';
     const ref = `${t('common.chapter')} ${snippet?.chapter} · ${t('common.verses')} ${snippet?.verses}`;
     setShareContent({
-      type: 'verse',
-      text: verseText,
+      type: 'reflection',
+      text: reflectionText,
       sanskrit: sanskritFirst,
       reference: ref,
       dayNumber: snippetId,
@@ -314,11 +314,17 @@ export default function ReadingScreen() {
                   setShareModalVisible(true);
                 }}
                 style={[styles.shareVerseButton, { backgroundColor: colors.accent }]}
+                accessibilityLabel={t('share.shareVerse')}
+                accessibilityRole="button"
               >
                 <Ionicons name="share-outline" size={18} color="#FFF" />
                 <Text style={styles.shareVerseButtonText}>{t('share.shareVerse')}</Text>
               </Pressable>
-              <Pressable onPress={() => { setShowMilestone(false); setAchievedMilestone(null); navigateHome(); }}>
+              <Pressable
+                onPress={() => { setShowMilestone(false); setAchievedMilestone(null); navigateHome(); }}
+                accessibilityLabel={achievedMilestone === 239 ? t('milestone.hariOm') : t('milestone.keepGoing')}
+                accessibilityRole="button"
+              >
                 <Text style={[styles.milestoneContinue, { color: colors.accent }]}>
                   {achievedMilestone === 239 ? t('milestone.hariOm') : t('milestone.keepGoing')}
                 </Text>

@@ -33,8 +33,8 @@ export function TodayCard({ snippet, isCompleted, nextSnippet }: TodayCardProps)
   };
 
   // Extract display title (remove "Day X: " prefix)
-  const displayTitle = snippet.title.replace(/^Day \d+:\s*/, '');
-  const nextDisplayTitle = nextSnippet?.title.replace(/^Day \d+:\s*/, '');
+  const displayTitle = snippet.title.replace(/^(Day \d+:\s*|दिन\s*\d+[:\s]*)/, '');
+  const nextDisplayTitle = nextSnippet?.title.replace(/^(Day \d+:\s*|दिन\s*\d+[:\s]*)/, '');
 
   // Get first line of Sanskrit as preview
   const sanskritPreview = snippet.sanskrit.split('\n')[0];

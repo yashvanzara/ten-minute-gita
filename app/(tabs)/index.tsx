@@ -43,11 +43,19 @@ export default function HomeScreen() {
   const [showTooltip, setShowTooltip] = useState(false);
   const tooltipAnim = useRef(new Animated.Value(0)).current;
 
+  const tooltipTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  useEffect(() => {
+    return () => {
+      tooltipTimers.current.forEach(clearTimeout);
+    };
+  }, []);
+
   const handleDismissWelcome = () => {
     dismissWelcome();
     // Show tooltip only if user hasn't completed any readings yet
     if (completedSnippets.length === 0) {
-      setTimeout(() => {
+      const showTimer = setTimeout(() => {
         setShowTooltip(true);
         Animated.timing(tooltipAnim, {
           toValue: 1,
@@ -55,14 +63,16 @@ export default function HomeScreen() {
           useNativeDriver: true,
         }).start();
         // Auto-dismiss after 3 seconds
-        setTimeout(() => {
+        const hideTimer = setTimeout(() => {
           Animated.timing(tooltipAnim, {
             toValue: 0,
             duration: 250,
             useNativeDriver: true,
           }).start(() => setShowTooltip(false));
         }, 3000);
+        tooltipTimers.current.push(hideTimer);
       }, 300);
+      tooltipTimers.current.push(showTimer);
     }
   };
 

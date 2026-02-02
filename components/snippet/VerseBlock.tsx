@@ -8,7 +8,7 @@ interface VerseBlockProps {
   transliteration: string;
   translation: string;
   fontSize: number;
-  colors: any;
+  colors: typeof import('@/constants/Colors').default.light;
   isLast: boolean;
   showSanskrit: boolean;
   showTransliteration: boolean;

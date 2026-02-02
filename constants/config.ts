@@ -19,7 +19,7 @@ export const CONFIG = {
     WATERMARK_OPACITY: 0.5,
     MAX_TEXT_LINES: 8,
     TEXT_SCALE_MIN: 0.7,
-    TEXT_SCALE_MAX: 1.2,
+    TEXT_SCALE_MAX: 1.5,
     TEXT_SCALE_STEP: 0.1,
     PADDING: 80,
     GRADIENTS: [

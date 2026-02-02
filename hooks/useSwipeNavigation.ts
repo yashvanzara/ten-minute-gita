@@ -6,6 +6,7 @@ import {
   withTiming,
   runOnJS,
 } from 'react-native-reanimated';
+import type { PanGestureHandlerGestureEvent, HandlerStateChangeEvent, PanGestureHandlerEventPayload } from 'react-native-gesture-handler';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -21,12 +22,12 @@ export function useSwipeNavigation(onPrev: () => void, onNext: () => void) {
       : withSpring(0);
   };
 
-  const onGestureEvent = (event: any) => {
+  const onGestureEvent = (event: PanGestureHandlerGestureEvent) => {
     translateX.value = event.nativeEvent.translationX;
   };
 
-  const onGestureEnd = (event: any) => {
-    const { translationX, velocityX } = event.nativeEvent;
+  const onGestureEnd = (event: HandlerStateChangeEvent<Record<string, unknown>>) => {
+    const { translationX, velocityX } = event.nativeEvent as unknown as PanGestureHandlerEventPayload;
 
     if (translationX > SWIPE_THRESHOLD || velocityX > 500) {
       snapBack();

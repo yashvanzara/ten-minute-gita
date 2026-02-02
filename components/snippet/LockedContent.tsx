@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface LockedContentProps {
-  colors: any;
+  colors: typeof import('@/constants/Colors').default.light;
   colorScheme: 'light' | 'dark';
   message?: string;
   unlockTime?: string;

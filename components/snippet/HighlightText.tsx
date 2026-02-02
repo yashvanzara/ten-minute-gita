@@ -1,7 +1,7 @@
 import React from 'react';
-import { Text, TextInput, StyleSheet } from 'react-native';
+import { Text, TextInput, StyleSheet, StyleProp, TextStyle } from 'react-native';
 
-export function HighlightText({ text, query, color, style }: { text: string; query?: string; color: string; style?: any }) {
+export function HighlightText({ text, query, color, style }: { text: string; query?: string; color: string; style?: StyleProp<TextStyle> }) {
   // No active search highlight → use TextInput for native word-level selection & Look Up
   if (!query || !query.trim()) {
     return (

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TextInput } from 'react-native';
+import { Text, TextInput, StyleProp, TextStyle } from 'react-native';
 import { HighlightText } from './HighlightText';
 
 export function FormattedText({
@@ -10,7 +10,7 @@ export function FormattedText({
   highlightQuery,
 }: {
   text: string;
-  style: any;
+  style: StyleProp<TextStyle>;
   color: string;
   italicColor?: string;
   highlightQuery?: string;
