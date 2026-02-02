@@ -195,6 +195,14 @@ export const hi = {
   'notifications.dayIntro': 'दिन {{day}}: {{title}} · केवल 10 मिनट',
   'notifications.keepGoing': '{{title}} · अपनी {{streak}}-दिन की यात्रा जारी रखें',
 
+  // Share card
+  'share.title': 'साझा करें',
+  'share.selectStyle': 'एक शैली चुनें',
+  'share.textSize': 'अक्षर का आकार',
+  'share.button': 'चित्र साझा करें',
+  'share.shareVerse': 'यह श्लोक साझा करें',
+  'share.error': 'साझा करने में असमर्थ। कृपया पुनः प्रयास करें।',
+
   // Dev tools (keep English)
   'dev.title': 'Dev Tools',
   'dev.note': 'Only visible in development',

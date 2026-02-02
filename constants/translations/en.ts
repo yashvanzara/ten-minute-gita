@@ -195,6 +195,14 @@ export const en = {
   'notifications.dayIntro': 'Day {{day}}: {{title}} · Just 10 minutes',
   'notifications.keepGoing': '{{title}} · Keep your {{streak}}-day journey going',
 
+  // Share card
+  'share.title': 'Share',
+  'share.selectStyle': 'Choose a style',
+  'share.textSize': 'Text size',
+  'share.button': 'Share Image',
+  'share.shareVerse': 'Share This Verse',
+  'share.error': 'Unable to share. Please try again.',
+
   // Dev tools (English only)
   'dev.title': 'Dev Tools',
   'dev.note': 'Only visible in development',

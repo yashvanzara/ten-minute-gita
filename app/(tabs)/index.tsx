@@ -15,6 +15,8 @@ import { useFirstTimeUser } from '@/contexts/FTUEContext';
 import Colors from '@/constants/Colors';
 import { useAppColorScheme } from '@/hooks/useAppColorScheme';
 import { trackScreenView } from '@/utils/sentry';
+import { ShareCardModal } from '@/components/share';
+import type { ShareCardContent } from '@/utils/shareCard';
 
 export default function HomeScreen() {
   useEffect(() => { trackScreenView('Home'); }, []);
@@ -33,6 +35,9 @@ export default function HomeScreen() {
     dismissWelcome,
     markNotificationsHandled,
   } = useFirstTimeUser();
+
+  const [shareModalVisible, setShareModalVisible] = useState(false);
+  const [shareContent, setShareContent] = useState<ShareCardContent | null>(null);
 
   // Tooltip state - show after welcome is dismissed, auto-hide after 3s
   const [showTooltip, setShowTooltip] = useState(false);
@@ -174,8 +179,24 @@ export default function HomeScreen() {
         <ReflectionTeaser
           reflection={displaySnippet.shortReflection || displaySnippet.reflection}
           isCompleted={readToday}
+          onShare={() => {
+            const reflectionText = (displaySnippet.shortReflection || displaySnippet.reflection).split('\n\n')[0].trim();
+            setShareContent({
+              type: 'reflection',
+              text: reflectionText,
+              reference: t('reading.dayOfTotal', { day: displaySnippet.id, total: 239 }),
+              dayNumber: displaySnippet.id,
+            });
+            setShareModalVisible(true);
+          }}
         />
       </Animated.View>
+
+      <ShareCardModal
+        visible={shareModalVisible}
+        onClose={() => setShareModalVisible(false)}
+        content={shareContent}
+      />
 
       {/* Notification prompt - shown on home screen after first reading completion */}
       <NotificationPrompt

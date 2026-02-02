@@ -26,6 +26,8 @@ import { useAppColorScheme } from '@/hooks/useAppColorScheme';
 import { CONFIG } from '@/constants/config';
 import { getSearchHighlight } from '@/utils/searchHighlight';
 import { trackScreenView } from '@/utils/sentry';
+import { ShareCardModal } from '@/components/share';
+import type { ShareCardContent } from '@/utils/shareCard';
 
 let _lastConsumedHighlightId = 0;
 
@@ -103,6 +105,8 @@ export default function ReadingScreen() {
   const [achievedMilestone, setAchievedMilestone] = useState<number | null>(null);
   const [readingProgress, setReadingProgress] = useState(0);
   const [minutesLeft, setMinutesLeft] = useState(0);
+  const [shareModalVisible, setShareModalVisible] = useState(false);
+  const [shareContent, setShareContent] = useState<ShareCardContent | null>(null);
 
   const showReadingProgress = canMarkComplete;
 
@@ -138,16 +142,22 @@ export default function ReadingScreen() {
       });
     }
 
+    const verseText = snippet?.verseTranslations?.[0] || '';
+    const sanskritFirst = snippet?.sanskrit?.split('\n')[0] || '';
+    const ref = `${t('common.chapter')} ${snippet?.chapter} · ${t('common.verses')} ${snippet?.verses}`;
+    setShareContent({
+      type: 'verse',
+      text: verseText,
+      sanskrit: sanskritFirst,
+      reference: ref,
+      dayNumber: snippetId,
+    });
+
     if (milestone) {
       setAchievedMilestone(milestone);
       setShowMilestone(true);
-      setTimeout(() => {
-        setShowMilestone(false);
-        setAchievedMilestone(null);
-        navigateHome();
-      }, 3000);
     } else {
-      setTimeout(navigateHome, 500);
+      setShareModalVisible(true);
     }
   };
 
@@ -297,12 +307,33 @@ export default function ReadingScreen() {
                 {achievedMilestone === 100 && t('milestone.hundredGrowth')}
                 {achievedMilestone === 239 && t('milestone.completedGita')}
               </Text>
-              <Text style={[styles.milestoneContinue, { color: colors.accent }]}>
-                {achievedMilestone === 239 ? t('milestone.hariOm') : t('milestone.keepGoing')}
-              </Text>
+              <Pressable
+                onPress={() => {
+                  setShowMilestone(false);
+                  setAchievedMilestone(null);
+                  setShareModalVisible(true);
+                }}
+                style={[styles.shareVerseButton, { backgroundColor: colors.accent }]}
+              >
+                <Ionicons name="share-outline" size={18} color="#FFF" />
+                <Text style={styles.shareVerseButtonText}>{t('share.shareVerse')}</Text>
+              </Pressable>
+              <Pressable onPress={() => { setShowMilestone(false); setAchievedMilestone(null); navigateHome(); }}>
+                <Text style={[styles.milestoneContinue, { color: colors.accent }]}>
+                  {achievedMilestone === 239 ? t('milestone.hariOm') : t('milestone.keepGoing')}
+                </Text>
+              </Pressable>
             </View>
           </View>
         )}
+        <ShareCardModal
+          visible={shareModalVisible}
+          onClose={() => {
+            setShareModalVisible(false);
+            navigateHome();
+          }}
+          content={shareContent}
+        />
       </View>
     </GestureHandlerRootView>
   );
@@ -344,5 +375,7 @@ const styles = StyleSheet.create({
   milestoneEmoji: { fontSize: 64, marginBottom: 16 },
   milestoneTitle: { fontSize: 24, fontWeight: '700', marginBottom: 8 },
   milestoneText: { fontSize: 16, textAlign: 'center' },
+  shareVerseButton: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 12, paddingHorizontal: 24, borderRadius: 12, marginTop: 20 },
+  shareVerseButtonText: { color: '#FFF', fontSize: 16, fontWeight: '600' },
   milestoneContinue: { fontSize: 18, fontWeight: '600', marginTop: 16 },
 });
