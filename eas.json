@@ -17,6 +17,11 @@
         "simulator": false
       }
     },
+    "apk": {
+      "android": {
+        "buildType": "apk"
+      }
+    },
     "production": {
       "autoIncrement": true,
       "ios": {

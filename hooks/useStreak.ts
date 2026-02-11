@@ -1,10 +1,36 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
+import { AppState as RNAppState } from 'react-native';
 import { useApp } from '@/contexts/AppContext';
 import { isToday, isYesterday, getDateString } from '@/utils/storage';
 
 export function useStreak() {
   const { state, useStreakFreeze } = useApp();
   const { streak } = state.progress;
+
+  // Track current date to ensure memo recomputes when date changes
+  const [currentDate, setCurrentDate] = useState(() => getDateString());
+
+  // Update date when app resumes from background
+  useEffect(() => {
+    const subscription = RNAppState.addEventListener('change', (nextState) => {
+      if (nextState === 'active') {
+        setCurrentDate(getDateString());
+      }
+    });
+    return () => subscription.remove();
+  }, []);
+
+  // Check for date change every minute (for midnight transition)
+  useEffect(() => {
+    const checkDateChange = () => {
+      const newDate = getDateString();
+      if (newDate !== currentDate) {
+        setCurrentDate(newDate);
+      }
+    };
+    const interval = setInterval(checkDateChange, 60000);
+    return () => clearInterval(interval);
+  }, [currentDate]);
 
   const streakStatus = useMemo(() => {
     const { lastReadDate, current, longest, freezesAvailable, freezeUsedThisWeek } = streak;
@@ -37,7 +63,7 @@ export function useStreak() {
       canUseFreeze: freezesAvailable > 0 && !freezeUsedThisWeek && isAtRisk,
       freezesAvailable,
     };
-  }, [streak]);
+  }, [streak, currentDate]);
 
   const getMotivationalMessage = () => {
     const { current, isAtRisk, readToday } = streakStatus;

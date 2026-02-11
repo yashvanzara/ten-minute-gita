@@ -125,7 +125,9 @@ export function TodayCard({ snippet, isCompleted, nextSnippet }: TodayCardProps)
         accessibilityLabel={t('todayCard.beginReading')}
         accessibilityRole="button"
       >
-        <Text style={[styles.ctaText, { fontSize: hiFontSize(18, language) }]}>{t('todayCard.beginReading')}</Text>
+        <Text style={[styles.ctaText, { fontSize: hiFontSize(18, language) }]}>
+          {t('todayCard.beginReading')}
+        </Text>
         <Text style={styles.ctaSubtext}>{t('todayCard.tenMinutes')}</Text>
       </Pressable>
     </View>

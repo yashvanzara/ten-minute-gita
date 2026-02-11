@@ -2,7 +2,7 @@
   "expo": {
     "name": "10 Minute Gita",
     "slug": "ten-minute-gita",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "tenminutegita",
@@ -18,7 +18,8 @@
       "bundleIdentifier": "com.tenminutegita.app",
       "buildNumber": "2",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": ["audio"]
       }
     },
     "android": {
@@ -43,7 +44,8 @@
           "color": "#E07A5F"
         }
       ],
-      "@sentry/react-native"
+      "@sentry/react-native",
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true

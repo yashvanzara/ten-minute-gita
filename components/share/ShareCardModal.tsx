@@ -31,7 +31,7 @@ interface ShareCardModalProps {
 export function ShareCardModal({ visible, onClose, content }: ShareCardModalProps) {
   const cardRef = useRef<View>(null);
   const [gradientIndex, setGradientIndex] = useState(0);
-  const [textScale, setTextScale] = useState(1);
+  const [textScale, setTextScale] = useState(1.15);
   const [sharing, setSharing] = useState(false);
   const colorScheme = useAppColorScheme();
   const colors = Colors[colorScheme];

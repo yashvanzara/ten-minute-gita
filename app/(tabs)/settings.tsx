@@ -12,6 +12,7 @@ import { AppearanceSettings } from '@/components/settings/AppearanceSettings';
 import { NotificationSettings } from '@/components/settings/NotificationSettings';
 import { SupportSection } from '@/components/settings/SupportSection';
 import { DevTools } from '@/components/settings/DevTools';
+import { DownloadManager } from '@/components/downloads/DownloadManager';
 
 declare const __DEV__: boolean;
 
@@ -36,7 +37,7 @@ export default function SettingsScreen() {
         snippetTitle,
         state.progress.streak.current,
         t
-      );
+      ).catch(() => { /* notification scheduling not critical */ });
     }
   }, [language]);
 
@@ -81,6 +82,8 @@ export default function SettingsScreen() {
         t={t}
         onUpdateSettings={updateSettings}
       />
+
+      <DownloadManager />
 
       <NotificationSettings
         settings={settings}

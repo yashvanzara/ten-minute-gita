@@ -16,7 +16,7 @@ export function LanguageToggle({ variant = 'compact' }: LanguageToggleProps) {
   if (variant === 'expanded') {
     return (
       <View style={styles.expandedContainer}>
-        <View style={[styles.expandedPill, { backgroundColor: colorScheme === 'dark' ? '#404040' : '#F0F0F0' }]}>
+        <View style={[styles.expandedPill, { backgroundColor: colors.background }]}>
           <Pressable
             style={[
               styles.expandedOption,

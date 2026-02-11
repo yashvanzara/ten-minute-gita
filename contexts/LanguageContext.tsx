@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Animated } from 'react-native';
 import { Language, getTranslation } from '@/constants/translations';
 import { CONFIG } from '@/constants/config';
+import { logger } from '@/utils/logger';
 
 const STORAGE_KEY = CONFIG.LANGUAGE_KEY;
 
@@ -41,6 +42,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       if (stored === 'en' || stored === 'hi') {
         setLanguageState(stored);
       }
+    }).catch((e) => {
+      logger.error('LanguageContext.load', e);
     });
   }, []);
 
@@ -52,7 +55,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       useNativeDriver: true,
     }).start(() => {
       setLanguageState(lang);
-      AsyncStorage.setItem(STORAGE_KEY, lang);
+      AsyncStorage.setItem(STORAGE_KEY, lang).catch((e) => {
+        logger.error('LanguageContext.setLanguage', e);
+      });
       // Fade in
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -60,6 +65,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         useNativeDriver: true,
       }).start();
     });
+    // Safety: if the fade-in callback doesn't fire (animation interrupted,
+    // native driver edge case), force content visible after animations should
+    // have completed (150ms out + 150ms in + buffer).
+    setTimeout(() => fadeAnim.setValue(1), 500);
   }, [fadeAnim]);
 
   const t = useCallback((key: string, params?: Record<string, string | number>): string => {

@@ -37,15 +37,16 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       let newStreak = { ...progress.streak };
       const lastRead = progress.streak.lastReadDate;
 
-      if (!lastRead || isYesterday(lastRead)) {
+      if (lastRead && isToday(lastRead)) {
+        // Already read today — don't change streak
+      } else if (!lastRead || isYesterday(lastRead)) {
         // Continue or start streak
         newStreak.current += 1;
         newStreak.longest = Math.max(newStreak.longest, newStreak.current);
-      } else if (!isToday(lastRead)) {
+      } else {
         // Streak broken (more than 1 day gap)
         newStreak.current = 1;
       }
-      // If already read today, don't change streak
 
       newStreak.lastReadDate = today;
 

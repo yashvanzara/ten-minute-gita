@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, Pressable, Alert, Share, Linking, StyleSheet } from 'react-native';
+import { View, Text, Pressable, Alert, Share, Linking, StyleSheet, Platform } from 'react-native';
 import Colors from '@/constants/Colors';
+import { CONFIG } from '@/constants/config';
 import { logger } from '@/utils/logger';
 
 interface SupportSectionProps {
@@ -12,16 +13,20 @@ interface SupportSectionProps {
 
 export function SupportSection({ colors, t, currentDay, onResetProgress }: SupportSectionProps) {
   const handleRateApp = async () => {
+    // Always open App Store directly - native requestReview() is unreliable
+    // (Apple limits it to ~3 uses per year and silently fails after that)
+    const storeUrl = Platform.select({
+      ios: `itms-apps://itunes.apple.com/app/id${CONFIG.APP_STORE_ID}?action=write-review`,
+      default: CONFIG.APP_STORE_URL,
+    });
     try {
-      const StoreReview = await import('expo-store-review');
-      const isAvailable = await StoreReview.isAvailableAsync();
-      if (isAvailable) {
-        await StoreReview.requestReview();
-      } else {
-        Alert.alert(t('settings.comingSoon'), t('settings.appStoreRating'));
-      }
+      await Linking.openURL(storeUrl);
     } catch {
-      Alert.alert(t('settings.comingSoon'), t('settings.appStoreRating'));
+      try {
+        await Linking.openURL(CONFIG.APP_STORE_URL);
+      } catch (error) {
+        logger.error('settings.rateApp', error);
+      }
     }
   };
 

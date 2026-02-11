@@ -36,7 +36,7 @@ export function NavigationControls({
   onGoToDay,
 }: NavigationControlsProps) {
   return (
-    <View style={[styles.bottomBar, { backgroundColor: colors.card }]}>
+    <View style={[styles.bottomBar, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
       <View style={styles.navigation}>
         <Pressable
           style={[styles.navButton, snippetId <= 1 && styles.navButtonDisabled]}
@@ -57,7 +57,7 @@ export function NavigationControls({
 
         {isReviewMode ? (
           <View style={[styles.completedIndicator, { backgroundColor: colorScheme === 'dark' ? '#1B3D1B' : '#E8F5E9' }]}>
-            <Text style={styles.completedIndicatorText}>{t('reading.alreadyRead')}</Text>
+            <Text style={[styles.completedIndicatorText, { color: colorScheme === 'dark' ? '#81C784' : '#4CAF50' }]}>{t('reading.alreadyRead')}</Text>
           </View>
         ) : isNextDay ? (
           <View style={[styles.previewIndicator, { backgroundColor: colors.card, borderColor: colors.accent }]}>
@@ -130,9 +130,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   navButton: {
+    flex: 1,
     paddingVertical: 12,
     paddingHorizontal: 16,
-    minWidth: 80,
     alignItems: 'center',
   },
   navButtonDisabled: { opacity: 0.5 },

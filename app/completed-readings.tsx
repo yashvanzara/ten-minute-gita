@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState, useCallback, useLayoutEffect } from 'react';
+import React, { useMemo, useRef, useState, useCallback, useLayoutEffect, useEffect } from 'react';
 import {
   View,
   Text,
@@ -88,6 +88,13 @@ export default function CompletedReadingsScreen() {
     timerRef.current = setTimeout(() => setDebouncedQuery(text), 200);
   }, []);
 
+  // Clean up debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
+
   const clearSearch = useCallback(() => {
     setQuery('');
     setDebouncedQuery('');
@@ -131,7 +138,7 @@ export default function CompletedReadingsScreen() {
       // Search in order of priority: title, verses, commentary, reflection
       const sources: { text: string; label: string }[] = [
         { text: snippet.title, label: 'Title' },
-        { text: snippet.verseTranslations.join(' '), label: 'Verse' },
+        { text: (snippet.verseTranslations ?? []).join(' '), label: 'Verse' },
         { text: snippet.commentary, label: 'Commentary' },
         { text: snippet.reflection, label: 'Reflection' },
       ];

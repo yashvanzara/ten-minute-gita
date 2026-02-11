@@ -14,6 +14,7 @@ import { AppProvider } from '@/contexts/AppContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { FTUEProvider } from '@/contexts/FTUEContext';
 import { AppErrorBoundary } from '@/components/ErrorBoundary';
+import { AudioPlayerProvider } from '@/contexts/AudioPlayerContext';
 import Colors from '@/constants/Colors';
 
 export {
@@ -51,7 +52,9 @@ export default function RootLayout() {
       <LanguageProvider>
         <FTUEProvider>
           <AppProvider>
-            <RootLayoutNav />
+            <AudioPlayerProvider>
+              <RootLayoutNav />
+            </AudioPlayerProvider>
           </AppProvider>
         </FTUEProvider>
       </LanguageProvider>

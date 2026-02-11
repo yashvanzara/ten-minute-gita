@@ -36,8 +36,11 @@ export function FTUEProvider({ children }: { children: React.ReactNode }) {
       if (stored) {
         try {
           setState({ ...DEFAULT_STATE, ...JSON.parse(stored) });
-        } catch (e) { logger.error('Failed to parse FTUE state', e); }
+        } catch (e) { logger.error('FTUEContext.load', e); }
       }
+      setLoaded(true);
+    }).catch((e) => {
+      logger.error('FTUEContext.load', e);
       setLoaded(true);
     });
   }, []);
@@ -45,7 +48,9 @@ export function FTUEProvider({ children }: { children: React.ReactNode }) {
   const update = useCallback((partial: Partial<FTUEState>) => {
     setState((prev) => {
       const next = { ...prev, ...partial };
-      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next)).catch((e) => {
+        logger.error('FTUEContext.update', e);
+      });
       return next;
     });
   }, []);
@@ -56,7 +61,9 @@ export function FTUEProvider({ children }: { children: React.ReactNode }) {
 
   const resetFTUE = useCallback(() => {
     setState(DEFAULT_STATE);
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_STATE));
+    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_STATE)).catch((e) => {
+      logger.error('FTUEContext.reset', e);
+    });
   }, []);
 
   return (

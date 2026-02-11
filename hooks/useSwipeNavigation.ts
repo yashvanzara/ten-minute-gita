@@ -44,5 +44,9 @@ export function useSwipeNavigation(onPrev: () => void, onNext: () => void) {
     transform: [{ translateX: reducedMotion ? 0 : translateX.value * 0.3 }],
   }));
 
-  return { onGestureEvent, onGestureEnd, animatedStyle };
+  const resetSwipe = () => {
+    translateX.value = 0;
+  };
+
+  return { onGestureEvent, onGestureEnd, animatedStyle, resetSwipe };
 }
