@@ -40,6 +40,12 @@
             margin-bottom: 15px;
             font-size: 20px;
         }
+        h3 {
+            color: #2D2D2D;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 17px;
+        }
         p, li {
             margin-bottom: 12px;
             color: #444;
@@ -66,58 +72,79 @@
 <body>
     <div class="container">
         <h1>Privacy Policy</h1>
-        <p class="updated"><strong>Last Updated:</strong> January 26, 2025</p>
+        <p class="updated"><strong>Last Updated:</strong> February 15, 2026</p>
 
         <h2>Overview</h2>
-        <p>10 Minute Gita ("the App") is committed to protecting your privacy. This Privacy Policy explains how we handle information when you use our mobile application.</p>
+        <p>10 Minute Gita ("the App"), available on iOS (Apple App Store) and Android (Google Play Store), is committed to protecting your privacy. This Privacy Policy explains what information we collect, how we use it, and the choices you have.</p>
 
-        <h2>Information We Collect</h2>
-        <h3>Information Stored Locally</h3>
-        <p>The App stores the following information <strong>only on your device</strong>:</p>
+        <h2>Information Stored Locally</h2>
+        <p>The App stores the following information <strong>on your device only</strong>:</p>
         <ul>
             <li><strong>Reading Progress:</strong> Which daily readings you have completed</li>
             <li><strong>Streak Data:</strong> Your current and longest reading streaks</li>
             <li><strong>Settings:</strong> Your preferences (font size, theme, notification time)</li>
             <li><strong>Reading History:</strong> Dates when you completed readings</li>
+            <li><strong>Downloaded Audio:</strong> Audio files saved for offline listening</li>
         </ul>
-        <p><strong>This information never leaves your device.</strong> We do not have access to it, and it is not transmitted to any server.</p>
+        <p>This local data is not transmitted to any server unless you create an account (see below).</p>
+
+        <h2>Account &amp; Sign-In (Optional)</h2>
+        <p>You can optionally create an account to sync your reading progress across devices. If you sign in, we collect:</p>
+        <ul>
+            <li><strong>Name:</strong> Your display name (provided during sign-up or from your Google/Apple account)</li>
+            <li><strong>Email Address:</strong> Used for account authentication</li>
+            <li><strong>User ID:</strong> A unique identifier assigned to your account</li>
+        </ul>
+        <p>Sign-in is available via Google, Apple, or email/password. We use <strong>Firebase Authentication</strong> by Google to manage accounts securely.</p>
+
+        <h3>Cross-Device Sync</h3>
+        <p>If you are signed in, your reading progress (completed readings, current day, streak data, and settings) is synced to <strong>Google Cloud Firestore</strong> so you can continue on another device. This data is tied to your account and is not shared with third parties.</p>
+
+        <h2>Crash &amp; Performance Reporting</h2>
+        <p>The App uses <strong>Sentry</strong> to collect anonymous crash reports and performance diagnostics. This helps us identify and fix bugs. This data includes:</p>
+        <ul>
+            <li>Crash logs and stack traces</li>
+            <li>Device type and operating system version</li>
+            <li>Screen navigation breadcrumbs</li>
+        </ul>
+        <p>This diagnostic data is <strong>not linked to your identity</strong> and is used solely to improve app stability.</p>
 
         <h2>Information We Do NOT Collect</h2>
         <ul>
-            <li>Personal identification information (name, email, address)</li>
             <li>Location data</li>
-            <li>Device identifiers</li>
-            <li>Usage analytics</li>
+            <li>Device advertising identifiers</li>
             <li>Browsing history</li>
-            <li>Any data that could identify you personally</li>
-        </ul>
-
-        <h2>Data Storage</h2>
-        <p>All data is stored locally on your device using secure storage mechanisms provided by the operating system. The data persists until you:</p>
-        <ul>
-            <li>Uninstall the App</li>
-            <li>Use the "Reset All Progress" feature in Settings</li>
-            <li>Clear the App's data through your device settings</li>
+            <li>Usage analytics for advertising</li>
         </ul>
 
         <h2>Third-Party Services</h2>
-        <p>The App does not use any third-party analytics, advertising, or tracking services.</p>
+        <p>The App uses the following third-party services:</p>
+        <ul>
+            <li><strong>Firebase Authentication</strong> (Google) &mdash; for account sign-in</li>
+            <li><strong>Cloud Firestore</strong> (Google) &mdash; for cross-device progress sync</li>
+            <li><strong>Sentry</strong> &mdash; for crash and performance reporting</li>
+        </ul>
+        <p>The App does not use any advertising or tracking services. None of your data is sold or shared with data brokers.</p>
+
+        <h2>Data Storage &amp; Deletion</h2>
+        <p><strong>Local data</strong> can be removed by uninstalling the App, using "Reset All Progress" in Settings, or clearing app data through your device settings (Android: Settings &gt; Apps &gt; 10 Minute Gita &gt; Clear Data).</p>
+        <p><strong>Account data</strong> stored in Firebase can be deleted by signing out and contacting us at the email below. We will delete your account and all associated data.</p>
 
         <h2>Notifications</h2>
         <p>If you enable daily reminders, the App uses your device's local notification system. Notification preferences are stored only on your device.</p>
 
         <h2>Children's Privacy</h2>
-        <p>The App does not knowingly collect any information from children under 13. The App contains no features that require personal information.</p>
+        <p>The App does not knowingly collect personal information from children under 13. Account creation is optional, and the App's core reading experience works without providing any personal information.</p>
 
         <h2>Changes to This Policy</h2>
         <p>We may update this Privacy Policy from time to time. We will notify you of any changes by updating the "Last Updated" date at the top of this policy.</p>
 
         <h2>Contact Us</h2>
-        <p>If you have questions about this Privacy Policy, please contact us at:</p>
+        <p>If you have questions about this Privacy Policy or want to request data deletion, please contact us at:</p>
         <p><strong>Email:</strong> <a href="mailto:tenminutegita@gmail.com">tenminutegita@gmail.com</a></p>
 
         <h2>Your Rights</h2>
-        <p>Since we don't collect any personal data, there is no personal data to access, modify, or delete from our servers. All your data is on your device and under your control.</p>
+        <p>You can use the App without creating an account. If you do create an account, you have the right to request access to, correction of, or deletion of your personal data by contacting us at the email above.</p>
 
         <p class="footer">10 Minute Gita is designed with privacy in mind. Your spiritual journey is yours alone.</p>
     </div>
